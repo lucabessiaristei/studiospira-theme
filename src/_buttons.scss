@@ -1,0 +1,38 @@
+.sp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: 59px;
+    padding: 0 1.5rem;
+    font-family: $primary-font;
+    font-weight: $primary-font-regular;
+    font-size: 20px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+
+    &::after {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background: url('../assets/icons/spiral.svg') no-repeat center / contain;
+        transition: transform 0.4s ease;
+    }
+
+    &:hover::after {
+        transform: rotate(180deg);
+    }
+}
+
+.sp-btn-light {
+    color: $color-black;
+    background-color: $color-1;
+}
+
+.sp-btn-dark {
+    color: $color-1;
+    background-color: $color-12;
+}

@@ -1,0 +1,31 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/theme.json",
+	"version": 3,
+	"settings": {
+		"typography": {
+			"fontFamilies": [
+				{
+					"fontFamily": "\"Familjen Grotesk\", sans-serif",
+					"name": "Primary Font",
+					"slug": "primary-font"
+				},
+				{
+					"fontFamily": "\"RX100\", sans-serif",
+					"name": "Secondary Font",
+					"slug": "secondary-font",
+					"fontFace": [
+						{
+							"fontFamily": "RX100",
+							"fontWeight": "400",
+							"fontStyle": "normal",
+							"src": [
+								"file:./assets/fonts/RX100-Regular.woff2",
+								"file:./assets/fonts/RX100-Regular.woff"
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}

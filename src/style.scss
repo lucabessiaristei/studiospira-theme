@@ -1,0 +1,78 @@
+// palette
+/*background and dark-bg buttons*/
+$color-weiss: #FFFCFB;
+/*banners and + background and light-bg buttons + big text on light-bg*/
+$color-bg: #7C1715;
+/*links and accent text + icons*/
+$color-accent: #F9877A;
+/*text*/
+$color-text: #211F26;
+/*75 text like dark banner subtitles*/
+$color-weiss-75: #FFFCFB75;
+
+// typography
+@import "typography";
+
+$fs-display: 80px;
+$fs-h1:      56px;
+$fs-h2:      36px;
+$fs-h3:      24px;
+$fs-body:    20px;
+$fs-sm:      16px;
+$fs-label:   12px;
+
+// components
+@import "buttons";
+@import "links";
+
+// reset
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: $primary-font;
+    font-size: $fs-body;
+    color: $color-black;
+    background-color: $color-white;
+}
+
+h1 { font-size: $fs-h1; }
+h2 { font-size: $fs-h2; }
+h3 { font-size: $fs-h3; }
+
+.display { font-size: $fs-display; }
+.label   { font-size: $fs-label; }
+
+// color utility classes — backgrounds
+.bg-weiss   { background-color: $color-weiss; }
+.bg-bg      { background-color: $color-bg; }
+.bg-accent  { background-color: $color-accent; }
+.bg-text    { background-color: $color-text; }
+
+// color utility classes — text
+.text-weiss    { color: $color-weiss; }
+.text-weiss-75 { color: $color-weiss-75; }
+.text-bg       { color: $color-bg; }
+.text-accent   { color: $color-accent; }
+.text-text     { color: $color-text; }
+
+// color utility classes — borders
+.border-weiss  { border-color: $color-weiss; }
+.border-bg     { border-color: $color-bg; }
+.border-accent { border-color: $color-accent; }
+.border-text   { border-color: $color-text; }
+
+.btn {
+    font-family: $primary-font;
+    font-weight: $primary-font-regular;
+    font-size: $fs-body;
+}
+
+// header
+
+@import "header";

@@ -1,0 +1,18 @@
+{
+    "dartsass.targetDirectory": "dist",
+    "dartsass.outputFormat": "cssonly",
+    "intelephense.stubs": [
+        "wordpress",
+        "Core",
+        "date",
+        "filesystem",
+        "standard",
+        "SPL",
+        "pcre",
+        "session",
+        "json"
+    ],
+    "phptools.stubs": [
+        ".stubs/wordpress-stubs.php"
+    ]
+}

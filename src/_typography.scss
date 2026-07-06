@@ -1,0 +1,60 @@
+// primary font
+$primary-font:          'Familjen Grotesk', sans-serif;
+$primary-font-regular:   400;
+$primary-font-medium:    500;
+$primary-font-semibold:  600;
+$primary-font-bold:      700;
+
+// secondary font
+$secondary-font:         'RX100', sans-serif;
+$secondary-font-regular:  400;
+
+// utility classes
+.primary-font {
+    font-family: $primary-font;
+    font-weight: $primary-font-regular;
+}
+
+.primary-font-italic {
+    font-family: $primary-font;
+    font-weight: $primary-font-regular;
+    font-style: italic;
+}
+
+.primary-font-medium {
+    font-family: $primary-font;
+    font-weight: $primary-font-medium;
+}
+
+.primary-font-medium-italic {
+    font-family: $primary-font;
+    font-weight: $primary-font-medium;
+    font-style: italic;
+}
+
+.primary-font-semibold {
+    font-family: $primary-font;
+    font-weight: $primary-font-semibold;
+}
+
+.primary-font-semibold-italic {
+    font-family: $primary-font;
+    font-weight: $primary-font-semibold;
+    font-style: italic;
+}
+
+.primary-font-bold {
+    font-family: $primary-font;
+    font-weight: $primary-font-bold;
+}
+
+.primary-font-bold-italic {
+    font-family: $primary-font;
+    font-weight: $primary-font-bold;
+    font-style: italic;
+}
+
+.secondary-font {
+    font-family: $secondary-font;
+    font-weight: $secondary-font-regular;
+}
