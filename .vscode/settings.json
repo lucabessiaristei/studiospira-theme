@@ -1,6 +1,8 @@
 {
+    "task.allowAutomaticTasks": "on",
     "dartsass.targetDirectory": "dist",
     "dartsass.outputFormat": "cssonly",
+    "dartsass.disableCompileOnSave": true,
     "intelephense.stubs": [
         "wordpress",
         "Core",
@@ -13,6 +15,8 @@
         "json"
     ],
     "phptools.stubs": [
-        ".stubs/wordpress-stubs.php"
+        ".stubs/wordpress-stubs.php",
+        ".stubs/acf-pro-stubs.php",
+        ".stubs/polylang-stubs.php"
     ]
 }
