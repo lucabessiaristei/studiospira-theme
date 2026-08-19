@@ -4,6 +4,21 @@
 @import "../node_modules/bootstrap/scss/maps";
 @import "../node_modules/bootstrap/scss/mixins";
 @import "../node_modules/bootstrap/scss/root";
+
+// extend spacers BEFORE utilities/grid capture the map
+$spacers: map-merge($spacers, (
+  a: 4rem,   // 64px
+  b: 5rem,   // 80px
+  c: 6rem,   // 96px
+  d: 7rem,   // 112px
+  e: 8rem,   // 128px
+  f: 9rem,   // 144px
+  g: 14rem,  // 224px
+));
+
+$gutters: $spacers;
+
+@import "../node_modules/bootstrap/scss/containers";
 @import "../node_modules/bootstrap/scss/grid";
 @import "../node_modules/bootstrap/scss/utilities";
 @import "../node_modules/bootstrap/scss/helpers";

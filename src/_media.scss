@@ -1,0 +1,28 @@
+.banner_photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 8;
+    object-fit: cover;
+    object-position: top;
+}
+
+.hover-border-img {
+    position: relative;
+    display: block;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border: 1px solid $color-bg;
+        pointer-events: none;
+        transition: border-width 0.3s ease;
+    }
+}

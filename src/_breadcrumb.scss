@@ -1,0 +1,10 @@
+.breadcrumb {
+    li,
+    a {
+        @include type('mono-body-s');
+    }
+
+    li:not(:last-child)::after {
+        content: "/";
+    }
+}

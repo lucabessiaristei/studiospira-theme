@@ -1,0 +1,26 @@
+.chi-siamo {
+
+    &__dati-list {
+        // 0.9rem gap has no matching spacer step — same as .intervento__dati
+        gap: 0.9rem;
+    }
+
+    &__pubblicazione {
+        &-info {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        &-cover {
+            flex: none;
+            width: 200px;
+
+            &-img {
+                display: block;
+                width: 100%;
+                aspect-ratio: 5 / 7; // A4-ish
+                object-fit: cover;
+            }
+        }
+    }
+}

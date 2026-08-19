@@ -1,38 +1,167 @@
-.sp-btn {
+// icon sizes
+$icon-w: 14px;
+$icon-h: 16px;
+$icon-w-nav: 12px;
+$icon-h-nav: 14px;
+
+// mixins
+@mixin sp-icon($w, $h, $color: $color-bg, $origin: '40.6% 54.1%') {
+    content: '';
+    display: inline-block;
+    order: -1;
+    width: $w;
+    height: $h;
+    background-color: $color;
+    mask: url('../assets/icons/spiral.svg') no-repeat center / contain;
+    -webkit-mask: url('../assets/icons/spiral.svg') no-repeat center / contain;
+    transform-origin: unquote($origin);
+    transition: transform 0.4s ease, background-color 0.35s ease;
+}
+
+@mixin sp-underline($bottom, $left, $right) {
+    content: '';
+    position: absolute;
+    bottom: $bottom;
+    left: $left;
+    right: $right;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+@mixin sp-base {
+    text-box-trim: both;
+    text-box-edge: cap alphabetic;
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    height: 59px;
-    padding: 0 1.5rem;
     font-family: $primary-font;
     font-weight: $primary-font-regular;
-    font-size: 20px;
     text-decoration: none;
     cursor: pointer;
+    color: inherit;
+}
+
+@mixin sp-hover {
+    &:hover::before,
+    &:active::before,
+    &[aria-current="true"]::before { transform: scaleX(1); }
+    &:hover::after,
+    &:active::after { transform: rotate(180deg); }
+}
+
+@mixin sp-ghost {
+    background: transparent;
+    padding: 0;
+    height: auto;
+    font-size: 16px;
+
+    &::before { @include sp-underline(-0.2rem, calc(#{$icon-w} + 0.25rem), 0); }
+    &::after  { @include sp-icon($icon-w, $icon-h); }
+}
+
+// links
+a:not(.sp-btn):not(.footer-menu a):not(header nav a):not(:has(img)) {
+    position: relative;
+    color: inherit;
+    font-style: inherit;
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 0.4ch;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 0.3s ease;
+
+    &:hover {
+        text-decoration-color: transparent;
+    }
+}
+
+a:not(.sp-btn):not(.footer-menu a):not(header nav a):has(img) {
+    position: relative;
+    color: inherit;
+    text-decoration: unset;
+    font-style: inherit;
+}
+
+// buttons
+.sp-btn {
+    @include sp-base;
+    position: relative;
+    padding: 1.1rem 1.5rem 1.3rem;
+    font-size: 20px;
     border: none;
     border-radius: 0;
-    background: transparent;
+    color: $color-text;
+    background-color: $color-weiss;
 
-    &::after {
-        content: '';
+    &::after { @include sp-icon($icon-w, $icon-h); }
+
+    &__label {
+        position: relative;
         display: inline-block;
-        width: 20px;
-        height: 20px;
-        background: url('../assets/icons/spiral.svg') no-repeat center / contain;
-        transition: transform 0.4s ease;
+
+        &::before { @include sp-underline(-0.2rem, 0, 0); }
     }
 
-    &:hover::after {
-        transform: rotate(180deg);
+    &:hover &__label::before,
+    &:active &__label::before,
+    &[aria-current="true"] &__label::before {
+        transform: scaleX(1);
     }
+
+    .dark & {
+        color: $color-weiss;
+        background-color: $color-bg;
+
+        &::after,
+        &.ghost::after { background-color: $color-accent; }
+    }
+
+    &.ghost {
+        @include sp-ghost;
+    }
+
+    @include sp-hover;
 }
 
-.sp-btn-light {
-    color: $color-black;
-    background-color: $color-1;
+.footer-menu a {
+    @include sp-base;
+    @include sp-ghost;
+
+    &::after { background-color: $color-accent; }
+
+    @include sp-hover;
 }
 
-.sp-btn-dark {
-    color: $color-1;
-    background-color: $color-12;
+// header nav
+header nav a {
+    @include sp-base;
+    color: $color-text;
+    font-size: 14px;
+    text-transform: uppercase;
+
+    &::before { @include sp-underline(-0.2rem, calc(#{$icon-w-nav} + 0.25rem), 0); }
+    &::after  { @include sp-icon($icon-w-nav, $icon-h-nav, $color-accent ); }
+
+    @include sp-hover;
 }
+
+header.is-scrolled nav a {
+    &::after  { @include sp-icon($icon-w-nav, $icon-h-nav, $color-bg); }
+} 
+
+.home header nav a {
+    color: $color-weiss;
+    transition: color 0.35s ease;
+}
+
+.sp-btn.no-underline::before,
+.sp-btn.no-underline .sp-btn__label::before,
+.footer-menu a.no-underline::before,
+header nav a.no-underline::before {
+    content: none !important;
+}
+

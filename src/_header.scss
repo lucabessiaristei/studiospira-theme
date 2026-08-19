@@ -1,3 +1,67 @@
+$header-height: 64px;
+
 .site-header {
-    height: 64px;
+    height: $header-height;
+    background-color: $color-weiss;
+    transition: background-color 0.35s ease;
+
+    .site-logo{ 
+        height: 100%;
+        
+        img {
+        height: 100%;
+        width: auto;
+    }}
+
+    .main-navigation {
+        height: fit-content;
+
+        .menu {
+            display: flex;
+            gap: 2rem;
+        }
+    }
+}
+
+// .site-content {
+//     padding-top: $header-height;
+// }
+
+// on the home page the header overlays the hero (same bg-color, seamless)
+// and fades to white once scrolled past it — see main.js for the trigger
+.home {
+    .site-content {
+        padding-top: 0;
+    }
+
+    .site-header {
+        background-color: $color-bg;
+
+        &.is-scrolled {
+            background-color: $color-weiss;
+        }
+    }
+
+    .site-branding {
+        position: relative;
+    }
+
+    .site-logo-white,
+    .site-logo-black {
+        transition: opacity 0.35s ease;
+    }
+
+    .site-logo-black {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+    }
+
+    .site-header.is-scrolled {
+        .site-logo-white { opacity: 0; }
+        .site-logo-black { opacity: 1; }
+
+        .main-navigation a { color: $color-text; }
+    }
 }

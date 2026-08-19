@@ -1,29 +1,20 @@
 // palette
-/*background and dark-bg buttons*/
-$color-weiss: #FFFCFB;
-/*banners and + background and light-bg buttons + big text on light-bg*/
-$color-bg: #7C1715;
-/*links and accent text + icons*/
-$color-accent: #F9877A;
-/*text*/
-$color-text: #211F26;
-/*75 text like dark banner subtitles*/
-$color-weiss-75: #FFFCFB75;
+$color-weiss:      #FFFCFB; // background and dark-bg buttons
+$color-bg:         #7C1715; // banners, light-bg buttons, big text on light-bg
+$color-accent:     #F9877A; // links, accent text, icons
+$color-text:       #000000; // text
+$color-weiss-75:   #FFFCFB75; // 75% text, dark banner subtitles
+$color-textlight:  #211F26; // text2
 
-// typography
+// typography: font vars, type scale, type() mixin
 @import "typography";
 
-$fs-display: 80px;
-$fs-h1:      56px;
-$fs-h2:      36px;
-$fs-h3:      24px;
-$fs-body:    20px;
-$fs-sm:      16px;
-$fs-label:   12px;
-
-// components
-@import "buttons";
-@import "links";
+// default bootstrap border-utility color (.border, .border-top, ...) to match
+// the divider color — override locally (inline style or a scoped rule) if a
+// specific border needs a different color
+:root {
+    --bs-border-color: #{$color-accent};
+}
 
 // reset
 *,
@@ -34,45 +25,74 @@ $fs-label:   12px;
     padding: 0;
 }
 
-body {
-    font-family: $primary-font;
-    font-size: $fs-body;
-    color: $color-black;
-    background-color: $color-white;
+// base
+html {
+    overscroll-behavior: none;
 }
 
-h1 { font-size: $fs-h1; }
-h2 { font-size: $fs-h2; }
-h3 { font-size: $fs-h3; }
+body {
+    @include type('body');
+    color: $color-text;
+    background-color: $color-weiss;
+    width: 100dvw;
+    overscroll-behavior: none;
+}
 
-.display { font-size: $fs-display; }
-.label   { font-size: $fs-label; }
+ul, li {
+    list-style: none;
+}
 
-// color utility classes — backgrounds
+h1 { @include type('h1'); }
+h2 { @include type('h2'); }
+h3 { @include type('h3'); }
+h4 { @include type('h4'); }
+h5 { @include type('h5'); }
+
+.display { @include type('display-1'); }
+
+// type utility classes (apply to any element)
+// size + line-height only — font-family/weight are set separately (see .primary-font*/.secondary-font)
+@each $name, $t in $type-scale {
+    .fs-#{$name} {
+        font-size:   nth($t, 1);
+        line-height: nth($t, 2);
+    }
+}
+
+// color utility classes: backgrounds
 .bg-weiss   { background-color: $color-weiss; }
 .bg-bg      { background-color: $color-bg; }
 .bg-accent  { background-color: $color-accent; }
 .bg-text    { background-color: $color-text; }
 
-// color utility classes — text
+// color utility classes: text
 .text-weiss    { color: $color-weiss; }
 .text-weiss-75 { color: $color-weiss-75; }
 .text-bg       { color: $color-bg; }
 .text-accent   { color: $color-accent; }
 .text-text     { color: $color-text; }
+.text-textlight { color: $color-textlight; }
 
-// color utility classes — borders
+// color utility classes: borders
 .border-weiss  { border-color: $color-weiss; }
 .border-bg     { border-color: $color-bg; }
 .border-accent { border-color: $color-accent; }
 .border-text   { border-color: $color-text; }
 
-.btn {
-    font-family: $primary-font;
-    font-weight: $primary-font-regular;
-    font-size: $fs-body;
+.section-label {
+    transform: translateY(-100%);
 }
 
-// header
+// components
+@import "buttons";
+@import "media";
+@import "breadcrumb";
+@import "lightbox";
 
+// layout
 @import "header";
+@import "front-page";
+@import "intervento";
+@import "chi-siamo";
+@import "contatti";
+@import "footer";

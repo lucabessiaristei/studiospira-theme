@@ -9,6 +9,17 @@ $primary-font-bold:      700;
 $secondary-font:         'RX100', sans-serif;
 $secondary-font-regular:  400;
 
+// declared explicitly here instead of relying only on theme.json's fontFace
+// (theme.json auto @font-face generation needs WP 6.4+ and can silently no-op)
+@font-face {
+    font-family: 'RX100';
+    src: url('../assets/fonts/RX100-Regular.woff2') format('woff2'),
+         url('../assets/fonts/RX100-Regular.woff') format('woff');
+    font-weight: $secondary-font-regular;
+    font-style: normal;
+    font-display: swap;
+}
+
 // utility classes
 .primary-font {
     font-family: $primary-font;
@@ -57,4 +68,29 @@ $secondary-font-regular:  400;
 .secondary-font {
     font-family: $secondary-font;
     font-weight: $secondary-font-regular;
+}
+
+// token: (size, line-height, family, weight)
+// line 'normal' = font intrinsic. display-1 = 73/80 = 0.9125
+$type-scale: (
+  'display-1':   (80px, 0.9125, $primary-font,   $primary-font-regular),
+  'h1':          (40px, normal,  $primary-font,   $primary-font-regular),
+  'h2':          (32px, normal,  $primary-font,   $primary-font-regular),
+  'h3':          (28px, normal,  $primary-font,   $primary-font-regular),
+  'h4':          (24px, normal,  $primary-font,   $primary-font-regular),
+  'h5':          (20px, normal,  $primary-font,   $primary-font-regular),
+  'body-lead':   (20px, normal,  $primary-font,   $primary-font-regular),
+  'body':        (16px, normal,  $primary-font,   $primary-font-regular),
+  'body-small':  (14px, normal,  $primary-font,   $primary-font-regular),
+  'mono-body':   (16px, normal,  $secondary-font, $secondary-font-regular),
+  'mono-body-s': (14px, normal,  $secondary-font, $secondary-font-regular),
+);
+
+@mixin type($name) {
+  $t: map-get($type-scale, $name);
+  @if $t == null { @error "Unknown type token: #{$name}"; }
+  font-family: nth($t, 3);
+  font-weight: nth($t, 4);
+  font-size:   nth($t, 1);
+  line-height: nth($t, 2);
 }
