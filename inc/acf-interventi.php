@@ -6,6 +6,30 @@ add_action('acf/init', function() {
     if (!function_exists('acf_add_local_field_group')) return;
 
     acf_add_local_field_group([
+        'key'    => 'group_interventi_cover',
+        'title'  => 'Foto copertina',
+        'fields' => [
+
+            [
+                'key'           => 'field_interventi_copertina',
+                'name'          => 'copertina',
+                'label'         => 'Foto copertina',
+                'type'          => 'image',
+                'required'      => 0,
+                'return_format' => 'array',
+                'instructions'  => 'Foto banner mostrata sotto il titolo, ratio 16:9.',
+            ],
+        ],
+        'location' => [[
+            ['param' => 'post_type', 'operator' => '==', 'value' => 'interventi'],
+        ]],
+        'menu_order'      => 0,
+        'position'        => 'acf_after_title',
+        'style'           => 'default',
+        'label_placement' => 'top',
+    ]);
+
+    acf_add_local_field_group([
         'key'    => 'group_interventi',
         'title'  => 'Dati intervento',
         'fields' => [
@@ -35,6 +59,19 @@ add_action('acf/init', function() {
                 'name'          => 'posizione',
                 'label'         => 'Posizione',
                 'type'          => 'text',
+                'required'      => 0,
+            ],
+            [
+                'key'           => 'field_interventi_destinazione_uso',
+                'name'          => 'destinazione_uso',
+                'label'         => "Destinazione d'uso",
+                'type'          => 'taxonomy',
+                'taxonomy'      => 'destinazione_uso',
+                'field_type'    => 'checkbox',
+                'add_term'      => 1,
+                'save_terms'    => 1,
+                'load_terms'    => 1,
+                'return_format' => 'object',
                 'required'      => 0,
             ],
             [

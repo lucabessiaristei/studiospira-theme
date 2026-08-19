@@ -27,6 +27,8 @@ add_filter('pll_get_post_types', function($post_types) {
 // copia tutti i campi ACF (e meta nativi) alle traduzioni invece di tradurli
 add_filter('pll_copy_post_metas', function($metas, $sync) {
     $pubblicazioni_metas = [
+        'sottotitolo',
+        'copertina',
         'a_cura_di',
         'editore',
         'anno',

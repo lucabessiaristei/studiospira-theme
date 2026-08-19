@@ -14,7 +14,7 @@ add_action('init', function() {
         'public'            => true,
         'has_archive'       => true,
         'show_in_rest'      => true,
-        'supports'          => ['title', 'editor', 'thumbnail'],
+        'supports'          => ['title', 'editor'],
         'menu_icon'         => 'dashicons-building',
         'rewrite'           => ['slug' => 'interventi'],
     ]);
@@ -32,6 +32,7 @@ add_action('init', function() {
         'show_in_rest'      => true,
         'show_admin_column' => true,
         'rewrite'           => ['slug' => 'destinazione-uso'],
+        'meta_box_cb'       => false, // managed via the ACF taxonomy field instead, see acf-interventi.php
     ]);
 
     register_post_type('servizi', [
@@ -57,3 +58,24 @@ add_filter('pll_get_post_types', function($post_types) {
     $post_types['servizi']    = 'servizi';
     return $post_types;
 });
+
+// same for the taxonomy — gives each term a language + a native "add
+// translation" UI on the term screen, instead of one term shared across languages
+add_filter('pll_get_taxonomies', function($taxonomies) {
+    $taxonomies['destinazione_uso'] = 'destinazione_uso';
+    return $taxonomies;
+});
+
+// destinazione_uso terms are internal-only tags — no need for slug/description
+add_action('admin_head-edit-tags.php', 'sp_hide_destinazione_uso_term_fields');
+add_action('admin_head-term.php', 'sp_hide_destinazione_uso_term_fields');
+function sp_hide_destinazione_uso_term_fields() {
+    $screen = get_current_screen();
+    if (!$screen || $screen->taxonomy !== 'destinazione_uso') return;
+    ?>
+    <style>
+        .term-slug-wrap,
+        .term-description-wrap { display: none; }
+    </style>
+    <?php
+}

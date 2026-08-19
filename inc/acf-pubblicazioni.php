@@ -11,6 +11,22 @@ add_action('acf/init', function() {
         'fields' => [
 
             [
+                'key'      => 'field_pubblicazioni_sottotitolo',
+                'name'     => 'sottotitolo',
+                'label'    => 'Sottotitolo',
+                'type'     => 'text',
+                'required' => 0,
+            ],
+            [
+                'key'           => 'field_pubblicazioni_copertina',
+                'name'          => 'copertina',
+                'label'         => 'Copertina',
+                'type'          => 'image',
+                'required'      => 0,
+                'return_format' => 'array',
+                'instructions'  => 'Ratio verticale tipo A4 (5:7 circa).',
+            ],
+            [
                 'key'      => 'field_pubblicazioni_a_cura_di',
                 'name'     => 'a_cura_di',
                 'label'    => 'A cura di',
