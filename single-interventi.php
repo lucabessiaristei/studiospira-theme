@@ -1,174 +1,198 @@
 <?php get_header(); ?>
 
-<?php while (have_posts()) : the_post(); ?>
+<?php while (have_posts()) : the_post();
 
-<?php
-$descrizione     = get_field('descrizione');
-$anno_inizio     = get_field('anno_inizio');
-$anno_fine       = get_field('anno_fine');
-$posizione       = get_field('posizione');
-$destinazione    = get_field('destinazione_uso');
-$committenza     = get_field('committenza');
-$team            = get_field('team');
-$budget          = get_field('budget');
-$categoria       = get_field('categoria');
-$copertina       = get_field('copertina');
-$servizi         = get_field('servizi');
-$articoli        = get_field('articoli');
-$foto            = get_field('foto');
+$copertina    = get_field('copertina');
+$anno_inizio  = get_field('anno_inizio');
+$anno_fine    = get_field('anno_fine');
+$posizione    = get_field('posizione');
+$committenza  = get_field('committenza');
+$team         = get_field('team');
+$budget       = get_field('budget');
+$categoria    = get_field('categoria');
+$servizi      = get_field('servizi');   // relationship, array of IDs
+$articoli     = get_field('articoli');  // relationship, array of IDs
+
+$destinazioni = wp_get_post_terms(get_the_ID(), 'destinazione_uso', ['fields' => 'names']);
+if (is_wp_error($destinazioni)) $destinazioni = [];
+
+$galleria = get_post_meta(get_the_ID(), 'galleria', true);
+if (!is_array($galleria)) $galleria = [];
 ?>
 
 <main class="intervento">
 
     <section class="intervento__hero">
-        <div class="container">
-            <h1><?php the_title(); ?></h1>
+        <div class="container px-4 py-a pt-md-f pb-md-d">
+            <?php get_template_part('template-parts/headline'); ?>
         </div>
         <?php if ($copertina) : ?>
-            <img src="<?php echo esc_url($copertina['url']); ?>"
-                 alt="<?php echo esc_attr($copertina['alt']); ?>">
+            <div class="container px-4 hero-photo">
+                <img src="<?php echo esc_url($copertina['sizes']['large']); ?>"
+                     alt="<?php echo esc_attr($copertina['alt']); ?>"
+                     class="banner_photo">
+            </div>
         <?php endif; ?>
     </section>
 
-    <section class="intervento__body">
-        <div class="container">
+    <section class="intervento__body py-a pt-md-a pb-md-g">
+        <div class="container px-4">
+            <div class="row">
 
-            <?php if ($descrizione) : ?>
-                <div class="intervento__descrizione">
-                    <p><?php echo esc_html($descrizione); ?></p>
-                </div>
-            <?php endif; ?>
+                <div class="col-lg-7 intervento__main">
 
-            <aside class="intervento__dati">
-                <?php if ($anno_inizio) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Anno inizio</span>
-                        <span><?php echo esc_html($anno_inizio); ?></span>
+                    <div class="intervento__descrizione">
+                        <?php the_content(); ?>
                     </div>
-                <?php endif; ?>
 
-                <?php if ($anno_fine) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Anno fine</span>
-                        <span><?php echo esc_html($anno_fine); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($posizione) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Posizione</span>
-                        <span><?php echo esc_html($posizione); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($destinazione) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Destinazione d'uso</span>
-                        <span><?php echo esc_html(implode(', ', $destinazione)); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($committenza) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Committenza</span>
-                        <span><?php echo esc_html($committenza); ?></span>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($servizi) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Servizi</span>
-                        <ul>
-                            <?php foreach ($servizi as $servizio) : ?>
-                                <li><?php echo esc_html($servizio->post_title); ?></li>
+                    <?php if ($articoli) : ?>
+                        <div class="intervento__articoli mt-f">
+                            <h6 class="secondary-font fs-mono-body d-block mb-3 text-accent"><?php pll_e('Articoli'); ?></h6>
+                            <?php foreach ($articoli as $aid) :
+                                $a_url = get_field('url', $aid);
+                                $a_dl  = (get_field('tipo_url', $aid) === 'download');
+                            ?>
+                                <div class="intervento__articolo d-flex justify-content-between align-items-center gap-3 py-3 border-bottom">
+                                    <span><?php echo esc_html(get_the_title($aid)); ?></span>
+                                    <a href="<?php echo esc_url($a_url); ?>" class="sp-btn ghost"
+                                       <?php echo $a_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
+                                        <?php pll_e('Leggi articolo'); ?>
+                                    </a>
+                                </div>
                             <?php endforeach; ?>
-                        </ul>
-                    </div>
-                <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
 
-                <?php if ($team) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Team</span>
-                        <span><?php echo esc_html($team); ?></span>
-                    </div>
-                <?php endif; ?>
+                </div>
 
-                <?php if ($budget) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Budget</span>
-                        <span><?php echo esc_html($budget); ?></span>
-                    </div>
-                <?php endif; ?>
+                <aside class="col-lg-4 offset-lg-1 intervento__dati d-flex flex-column">
 
-                <?php if ($categoria) : ?>
-                    <div class="intervento__dato">
-                        <span class="label">Categoria</span>
-                        <span><?php echo esc_html($categoria); ?></span>
-                    </div>
-                <?php endif; ?>
-            </aside>
+                    <?php if ($anno_inizio) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Anno inizio</span>
+                            <span><?php echo esc_html($anno_inizio); ?></span>
+                        </div>
+                    <?php endif; ?>
 
+                    <?php if ($anno_fine) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Anno fine</span>
+                            <span><?php echo esc_html($anno_fine); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($posizione) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Posizione</span>
+                            <span><?php echo esc_html($posizione); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($destinazioni) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Destinazione d'uso</span>
+                            <span><?php echo esc_html(implode(', ', $destinazioni)); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($committenza) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Committenza</span>
+                            <span><?php echo esc_html($committenza); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($servizi) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Servizi</span>
+                            <span><?php echo esc_html(implode(', ', array_map('get_the_title', $servizi))); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($team) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Team</span>
+                            <span><?php echo esc_html($team); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($budget) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Budget</span>
+                            <span><?php echo esc_html($budget); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($categoria) : ?>
+                        <div class="intervento__dato d-grid align-items-baseline gap-3">
+                            <span class="secondary-font fs-mono-body text-textlight">Categoria</span>
+                            <span><?php echo esc_html($categoria); ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                </aside>
+
+            </div>
         </div>
     </section>
 
-    <?php if ($articoli) : ?>
-        <section class="intervento__articoli">
-            <div class="container">
-                <?php foreach ($articoli as $articolo) : ?>
-                    <div class="intervento__articolo">
-                        <span><?php echo esc_html($articolo['titolo']); ?></span>
-                        <a href="<?php echo esc_url($articolo['url']); ?>"
-                           target="_blank" rel="noopener">Leggi</a>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
-    <?php endif; ?>
-
-    <?php if ($foto) : ?>
-        <section class="intervento__galleria">
-            <div class="container">
-                <?php foreach ($foto as $img) : ?>
-                    <a href="<?php echo esc_url($img['url']); ?>"
-                       data-lightbox="galleria-<?php the_ID(); ?>">
-                        <img src="<?php echo esc_url($img['sizes']['medium']); ?>"
-                             alt="<?php echo esc_attr($img['alt']); ?>">
-                    </a>
-                <?php endforeach; ?>
+    <?php if ($galleria) : ?>
+        <section class="intervento__galleria pb-g">
+            <div class="container px-4">
+                <div class="row row-cols-3 g-4 align-items-start">
+                    <?php foreach ($galleria as $img_id) : ?>
+                        <div class="col">
+                            <a href="<?php echo esc_url(wp_get_attachment_image_url($img_id, 'large')); ?>"
+                               data-lightbox="galleria-<?php the_ID(); ?>">
+                                <span class="intervento__galleria-img hover-border-img">
+                                    <?php echo wp_get_attachment_image($img_id, 'medium'); ?>
+                                </span>
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </section>
     <?php endif; ?>
 
     <?php
-    // next intervento by menu_order
-    $next = new WP_Query([
+    // next intervento: database order (ID asc), wraps to first
+    $ids = get_posts([
         'post_type'      => 'interventi',
-        'posts_per_page' => 1,
-        'orderby'        => 'menu_order',
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'orderby'        => 'ID',
         'order'          => 'ASC',
-        'meta_query'     => [[
-            'key'     => 'ordine',
-            'value'   => get_post_field('menu_order', get_the_ID()),
-            'compare' => '>',
-            'type'    => 'NUMERIC',
-        ]],
+        'posts_per_page' => -1,
     ]);
+    $next_id = null;
+    if (count($ids) > 1) {
+        $pos     = array_search(get_the_ID(), $ids, true);
+        $next_id = $ids[($pos + 1) % count($ids)];
+    }
     ?>
 
-    <?php if ($next->have_posts()) : $next->the_post(); ?>
-        <section class="intervento__prossimo">
-            <div class="container">
-                <span class="label">Prossimo</span>
-                <?php $cop = get_field('copertina'); ?>
-                <?php if ($cop) : ?>
-                    <img src="<?php echo esc_url($cop['sizes']['thumbnail']); ?>"
-                         alt="<?php echo esc_attr($cop['alt']); ?>">
-                <?php endif; ?>
-                <h3><?php the_title(); ?></h3>
-                <a href="<?php the_permalink(); ?>">Esplora</a>
+    <?php if ($next_id) :
+        $next_cop = get_field('copertina', $next_id);
+    ?>
+        <section class="intervento__prossimo pb-a">
+            <div class="container px-4">
+                <div class="position-relative">
+                    <h3 class="section-label d-flex align-items-center pb-2 position-absolute start-0 top-0"><?php pll_e('Prossimo intervento'); ?></h3>
+                    <div class="intervento__prossimo-card pt-4 border-top">
+                        <?php if ($next_cop) : ?>
+                            <img src="<?php echo esc_url($next_cop['sizes']['thumbnail']); ?>"
+                                 alt="<?php echo esc_attr($next_cop['alt']); ?>">
+                        <?php endif; ?>
+                        <h3 class="text-bg"><?php echo esc_html(get_the_title($next_id)); ?></h3>
+                        <p class="dark ms-auto">
+                            <a href="<?php echo esc_url(get_permalink($next_id)); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Esplora intervento'); ?></span></a>
+                        </p>
+                    </div>
+                </div>
             </div>
         </section>
-    <?php endif; wp_reset_postdata(); ?>
+    <?php endif; ?>
 
 </main>
 
