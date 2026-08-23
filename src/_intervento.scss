@@ -117,8 +117,14 @@
         &-img {
             width: 100%;
 
-            &:hover::after {
+            &:active::after {
                 border-width: 15px;
+            }
+
+            @media (hover: hover) {
+                &:hover::after {
+                    border-width: 15px;
+                }
             }
         }
     }
@@ -157,18 +163,33 @@
     }
 }
 
+// one open state, shared by all three triggers; the values it reads are set
+// per breakpoint on __menu
+@mixin interventi-filter-open($state) {
+    &#{$state} .interventi-filter__menu {
+        max-height: var(--menu-open-height);
+        overflow-y: auto;
+    }
+
+    // spiral stays rotated while the menu is open, even once the pointer
+    // has moved off the button and into the menu
+    &#{$state} .interventi-filter__toggle::after {
+        transform: rotate(180deg);
+    }
+}
+
 .interventi-filter {
     position: relative;
     display: flex;
     align-items: center;
 
+    // sits below the divider lines (1000) on purpose: they paint over its top
+    // edge and become its top border. border-top stays 0, or a closed menu
+    // would show top + bottom stacked as a 2px line.
     &__menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
+        --menu-open-height: 60vh;
+
         z-index: 10;
-        width: max-content;
-        min-width: 150px;
         max-height: 0;
         overflow: hidden;
         background-color: $color-weiss;
@@ -177,10 +198,69 @@
         transition: max-height 0.3s ease;
     }
 
-    &:hover &__menu,
-    &:focus-within &__menu {
-        max-height: 20rem;
+    // mobile-only fake top border, at the exact y the menu starts from
+    &__rule {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        border-bottom: 1px solid $color-accent;
+        pointer-events: none;
     }
+
+    // --- layout: per breakpoint ---
+
+    @media (min-width: 992px) {
+        // the shared full-width line covers this here
+        &__rule {
+            display: none;
+        }
+
+
+        &__menu {
+            --menu-open-height: 20rem;
+
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: max-content;
+            min-width: 150px;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        width: 100%;
+        padding-bottom: 1rem;
+
+        // front-to-back in document order: filters only overlap downwards, so
+        // each row (menu and rule together) stays above the ones beneath it.
+        // Static rather than raised while open, which would drop back the
+        // instant a menu started closing.
+        @for $i from 1 through 4 {
+            &:nth-child(#{$i}) {
+                z-index: (5 - $i) * 10;
+            }
+        }
+
+        &__menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+    }
+
+    // --- open triggers: per input device, not breakpoint ---
+
+    @include interventi-filter-open(':focus-within');
+
+    @media (hover: hover) {
+        @include interventi-filter-open(':hover');
+    }
+
+    // touch-only (see main.js)
+    @include interventi-filter-open('.is-open');
 
     &__option {
         display: flex;
@@ -188,15 +268,21 @@
         justify-content: space-between;
         gap: 0.5rem;
         width: 100%;
-        padding: 0.6rem 1rem;
+        padding: 0.6rem 1rem 0.75rem;
         background: none;
         border: none;
         text-align: left;
         cursor: pointer;
         color: $color-text;
 
-        &:hover {
+        &:active {
             background-color: rgba($color-accent, 0.12);
+        }
+
+        @media (hover: hover) {
+            &:hover {
+                background-color: rgba($color-accent, 0.12);
+            }
         }
     }
 
@@ -230,6 +316,66 @@
     }
 }
 
+// heading, reset and list share one flex container so the reset can change row
+// per breakpoint without being duplicated in the markup. Gaps are set here, not
+// via `gap-*`, whose !important would block zeroing row-gap on desktop.
+.interventi-filters {
+    column-gap: 1.5rem;
+    row-gap: 1.2rem;
+
+    &__heading {
+        order: 1;
+    }
+
+    &__reset-wrap {
+        order: 2;
+    }
+
+    &__list {
+        order: 3;
+    }
+
+    // mobile: [heading | reset] then the filters on their own row
+    @media (max-width: 991.98px) {
+        &__heading {
+            align-self: center;
+            flex: 1 1 auto;
+        }
+
+        &__list {
+            flex: 0 0 100%;
+        }
+    }
+
+    // desktop: heading on its own row, then [filters | reset] — unchanged
+    @media (min-width: 992px) {
+        row-gap: 0;
+
+        &__heading {
+            flex: 0 0 100%;
+        }
+
+        &__list {
+            order: 2;
+            flex: 1 1 auto;
+        }
+
+        &__reset-wrap {
+            order: 3;
+        }
+    }
+}
+
+// anchored to the bottom of the whole bar, which is the wrong y on mobile —
+// there each filter carries its own __rule instead
+.interventi-filters__rule {
+    @media (max-width: 991.98px) {
+        display: none;
+    }
+}
+
+// space is always reserved (never collapsed) so showing the button can't
+// reflow the grid below
 .interventi-filters__reset-wrap {
     display: flex;
     align-items: center;
@@ -294,15 +440,21 @@
 .page-heading {
 
     &__breadcrumb {
-        @include type('mono-body-s');
+        @include type('mono-body-small');
         letter-spacing: 0.04em;
 
         a {
             color: inherit;
         }
 
-        a:hover {
+        a:active {
             color: $color-accent;
+        }
+
+        @media (hover: hover) {
+            a:hover {
+                color: $color-accent;
+            }
         }
     }
 

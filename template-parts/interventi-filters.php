@@ -20,15 +20,26 @@ $interventi_filter_groups = [
     'servizio'         => ['label' => pll__('Servizio'),           'options' => $interventi_filter_servizi_options],
 ];
 ?>
-<div class="interventi-filters d-flex flex-wrap justify-content-between gap-4 position-relative">
-    <div class="position-absolute w-100 top-100 border-bottom" style="z-index: 1000; pointer-events: none;"></div>
+<?php // heading, reset and list are flex siblings; CSS order/basis moves the
+      // reset between the two rows per breakpoint ?>
+<div class="interventi-filters d-flex flex-wrap justify-content-between position-relative">
+    <?php // desktop only: shared line the dropdowns hang from ?>
+    <div class="interventi-filters__rule position-absolute w-100 top-100 border-bottom" style="z-index: 1000; pointer-events: none;"></div>
 
-    <div class="interventi-filters__list d-flex flex-wrap gap-5">
+    <h6 class="interventi-filters__heading secondary-font fs-mono-body-small mb-0 text-accent"><?php pll_e('Filtri'); ?></h6>
+
+    <div class="interventi-filters__reset-wrap dark">
+        <button type="button" class="interventi-filters__reset mb-lg-4 sp-btn sp-small is-hidden">
+            <span class="sp-btn__label"><?php pll_e('Reset filtri'); ?></span>
+        </button>
+    </div>
+
+    <div class="interventi-filters__list d-flex flex-column flex-lg-row flex-wrap gap-3 gap-lg-5">
         <?php foreach ($interventi_filter_groups as $key => $group) :
             if (!$group['options']) continue;
         ?>
             <div class="interventi-filter" data-filter="<?php echo esc_attr($key); ?>">
-                <button type="button" class="interventi-filter__toggle sp-btn ghost no-underline">
+                <button type="button" class="interventi-filter__toggle sp-btn ghost sp-small no-underline">
                     <?php echo esc_html($group['label']); ?>
                     <span class="interventi-filter__toggle-clear" aria-hidden="true">&times;</span>
                 </button>
@@ -40,14 +51,10 @@ $interventi_filter_groups = [
                         </button>
                     <?php endforeach; ?>
                 </div>
+                <?php // mobile only: doubles as the open menu's top border ?>
+                <div class="interventi-filter__rule" aria-hidden="true"></div>
             </div>
         <?php endforeach; ?>
-    </div>
-
-    <div class="interventi-filters__reset-wrap dark">
-        <button type="button" class="interventi-filters__reset sp-btn mb-4 is-hidden">
-            <span class="sp-btn__label"><?php pll_e('Reset filtri'); ?></span>
-        </button>
     </div>
 
 </div>
