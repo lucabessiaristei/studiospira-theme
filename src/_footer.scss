@@ -1,3 +1,15 @@
+// pins the footer to the bottom on pages too short to fill a tall viewport.
+// The fixed header isn't a flex item, so the column is content + footer.
+#page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+}
+
+.site-footer {
+    margin-top: auto;
+}
+
 .footer-main {
     .site-logo img {
         width: 160px;

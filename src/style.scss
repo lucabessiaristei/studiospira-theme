@@ -89,6 +89,19 @@ h5 { @include type('h5'); }
     transform: translateY(-100%);
 }
 
+// staggered grid reveal — class added by main.js, never in markup, so content
+// stays visible without JS; the per-item delay is set inline
+.sp-reveal {
+    opacity: 0;
+    transform: translateY(1.5rem);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+
+    &.is-revealed {
+        opacity: 1;
+        transform: none;
+    }
+}
+
 // components
 @import "buttons";
 @import "media";
