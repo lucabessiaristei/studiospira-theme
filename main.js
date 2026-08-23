@@ -6,21 +6,46 @@
 
     if (!header || !hero) return;
 
-    var threshold = 0;
+    var ticking = false;
 
-    function updateThreshold() {
-        threshold = hero.offsetTop + hero.offsetHeight - header.offsetHeight;
+    // read from the hero's live rect rather than a cached scroll threshold,
+    // which went stale on any post-load layout shift (fonts, images)
+    function apply() {
+        ticking = false;
+        header.classList.toggle(
+            'is-scrolled',
+            hero.getBoundingClientRect().bottom <= header.offsetHeight
+        );
     }
 
     function onScroll() {
-        header.classList.toggle('is-scrolled', window.scrollY >= threshold);
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(apply);
     }
 
-    window.addEventListener('resize', updateThreshold);
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
 
-    updateThreshold();
-    onScroll();
+    // initial state without transitions, so loading mid-page doesn't fade in
+    // from the unscrolled colour
+    header.classList.add('is-init');
+    apply();
+    window.requestAnimationFrame(function () {
+        header.classList.remove('is-init');
+    });
+})();
+
+(function () {
+    var timer = null;
+
+    window.addEventListener('resize', function () {
+        document.body.classList.add('is-resizing');
+        window.clearTimeout(timer);
+        timer = window.setTimeout(function () {
+            document.body.classList.remove('is-resizing');
+        }, 200);
+    });
 })();
 
 (function () {
@@ -235,11 +260,69 @@
     });
 })();
 
+// staggered fade-in for the card grids (home, archive, gallery). One shared
+// observer; the delay is per intersection batch, so each row staggers as it
+// scrolls in instead of inheriting an ever-growing delay from its grid index.
+(function () {
+    var selectors = [
+        '.front-page__interventi .row > .col',
+        '.interventi-archive .interventi-grid > .col',
+        '.intervento__galleria .row > .col'
+    ];
+
+    if (!('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var items = [];
+    selectors.forEach(function (selector) {
+        items = items.concat(Array.prototype.slice.call(document.querySelectorAll(selector)));
+    });
+
+    if (!items.length) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+        var i = 0;
+
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+
+            entry.target.style.transitionDelay = (i++ * 70) + 'ms';
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.05 });
+
+    items.forEach(function (item) {
+        item.classList.add('sp-reveal');
+        observer.observe(item);
+    });
+})();
+
 (function () {
     var filters  = document.querySelectorAll('.interventi-filter');
     var resetBtn = document.querySelector('.interventi-filters__reset');
 
     if (!filters.length) return;
+
+    // click-to-open is only for devices that can't hover; the rest open via
+    // CSS hover at any width
+    var mqHover = window.matchMedia('(hover: hover)');
+    var mqDesktop = window.matchMedia('(min-width: 992px)');
+
+    function closeAllMenus() {
+        filters.forEach(function (f) { f.classList.remove('is-open'); });
+    }
+
+    mqDesktop.addEventListener('change', closeAllMenus);
+
+    document.addEventListener('click', function (event) {
+        if (mqHover.matches) return;
+        if (!event.target.closest('.interventi-filter')) closeAllMenus();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeAllMenus();
+    });
 
     function updateFilterState(filter) {
         var selectedOption = filter.querySelector('.interventi-filter__option.is-selected');
@@ -262,9 +345,29 @@
     filters.forEach(function (filter) {
         var options = filter.querySelectorAll('.interventi-filter__option');
         var toggleClear = filter.querySelector('.interventi-filter__toggle-clear');
+        var toggle = filter.querySelector('.interventi-filter__toggle');
+
+        if (toggle) {
+            toggle.addEventListener('click', function () {
+                if (mqHover.matches) return;
+
+                var wasOpen = filter.classList.contains('is-open');
+                closeAllMenus();
+                if (!wasOpen) filter.classList.add('is-open');
+            });
+        }
 
         options.forEach(function (option) {
-            option.addEventListener('click', function () {
+            option.addEventListener('click', function (event) {
+                if (!mqHover.matches) {
+                    filter.classList.remove('is-open');
+                    // tapping the option focuses it, and :focus-within would
+                    // hold the menu open — there's no mouseleave on touch to
+                    // blur it. detail is 0 for keyboard activation, which
+                    // should keep its focus.
+                    if (event.detail > 0) option.blur();
+                }
+
                 var wasSelected = option.classList.contains('is-selected');
 
                 options.forEach(function (o) { o.classList.remove('is-selected'); });
@@ -430,6 +533,12 @@
     if (gridWrap) {
         gridWrap.addEventListener('transitionend', function (event) {
             if (event.propertyName === 'height') gridWrap.style.height = '';
+        });
+
+        // when start and end heights match no transition fires, so the inline
+        // height above is never cleared and clips the grid once it restacks
+        window.addEventListener('resize', function () {
+            gridWrap.style.height = '';
         });
     }
 
