@@ -23,15 +23,37 @@
             </div>
 
             <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
-                <span class="menu-toggle__label">Menu</span>
-                <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
+                <span class="visually-hidden"><?php pll_e('Menu'); ?></span>
+                <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span><span></span></span>
             </button>
 
             <nav class="main-navigation" aria-label="Primary navigation">
+                <div class="main-navigation__inner container px-4">
                 <?php wp_nav_menu([
                     'theme_location' => 'primary',
                     'menu_id'        => 'primary-menu',
                 ]); ?>
+
+                <div class="main-navigation__meta dark text-weiss">
+                    <?php $header_languages = function_exists('pll_the_languages') ? pll_the_languages(['raw' => 1]) : []; ?>
+                    <?php if ($header_languages) : ?>
+                        <div class="main-navigation__lang d-flex gap-2">
+                            <?php foreach ($header_languages as $lang) : ?>
+                                <a href="<?php echo esc_url($lang['url']); ?>"
+                                   class="sp-btn ghost sp-small"
+                                   <?php echo $lang['current_lang'] ? 'aria-current="true"' : ''; ?>>
+                                    <?php echo esc_html($lang['name']); ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php get_template_part('template-parts/footer-contacts', null, [
+                        'variant' => 'dark',
+                        'fields'  => ['email', 'telefono'],
+                    ]); ?>
+                </div>
+                </div>
             </nav>
         </div>
     </header>

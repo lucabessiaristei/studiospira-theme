@@ -1,11 +1,12 @@
 <?php
 $variant     = isset($args['variant']) ? $args['variant'] : 'dark';
+$fields      = isset($args['fields']) ? $args['fields'] : ['indirizzo', 'email', 'telefono'];
 $label_class = $variant === 'light' ? 'text-accent' : 'text-weiss-75';
 $link_class  = $variant === 'light' ? 'text-accent' : '';
 
-$contatti_indirizzo = get_option('sp_contatti_indirizzo');
-$contatti_email     = get_option('sp_contatti_email');
-$contatti_telefono  = get_option('sp_contatti_telefono');
+$contatti_indirizzo = in_array('indirizzo', $fields, true) ? get_option('sp_contatti_indirizzo') : '';
+$contatti_email     = in_array('email', $fields, true) ? get_option('sp_contatti_email') : '';
+$contatti_telefono  = in_array('telefono', $fields, true) ? get_option('sp_contatti_telefono') : '';
 ?>
 <div class="footer-contacts d-flex flex-column gap-4">
 

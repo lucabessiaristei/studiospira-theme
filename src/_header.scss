@@ -1,9 +1,13 @@
 $header-height: 64px;
 
+// shared by every header cross-fade (panel, logo, toggle) so they stay in sync
+$header-fade: 0.35s;
+$header-ease: ease;
+
 .site-header {
     height: $header-height;
     background-color: $color-weiss;
-    transition: background-color 0.35s ease;
+    transition: background-color $header-fade $header-ease;
 
     > div {
         position: relative;
@@ -17,29 +21,48 @@ $header-height: 64px;
         width: auto;
     }}
 
+    // keep the logo and toggle above the panel, which covers the header row
+    .site-branding,
+    .menu-toggle {
+        position: relative;
+        z-index: 1;
+    }
+
     .main-navigation {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        left: 0;
-        max-height: 0;
+        // covers the whole viewport, header row included: the panel is itself
+        // the header's open-state background, so only one surface fades
+        position: fixed;
+        inset: 0;
+        height: 100dvh;
         overflow: hidden;
-        padding: 0 1rem;
-        background-color: $color-weiss;
+        padding: calc(#{$header-height} + 1.5rem) 0 2rem;
+        background-color: $color-bg;
         opacity: 0;
         pointer-events: none;
-        transform: translateY(-0.5rem);
         visibility: hidden;
-        transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.2s ease,
-            transform 0.35s ease, background-color 0.35s ease,
-            visibility 0s linear 0.35s;
+        will-change: opacity; // promote up front; avoids a first-frame flash
+        transition: opacity $header-fade $header-ease,
+            visibility 0s linear $header-fade;
+
+        // carries `container px-4` so the content lines up with the header row
+        &__inner {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
 
         .menu {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
+        &__meta {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
     }
 
     .menu-toggle {
@@ -50,41 +73,45 @@ $header-height: 64px;
         border: 0;
         background: transparent;
         color: inherit;
-        transition: color 0.35s ease;
+        transition: color $header-fade $header-ease;
         cursor: pointer;
 
+        // 3 bars, roughly square: 3x1px + 2x8px gap = 19px tall by 20px wide
         &__icon {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
             width: 20px;
 
             span {
                 display: block;
                 height: 1px;
                 background-color: currentColor;
-                transition: transform 0.2s ease;
+                transition: transform 0.2s ease, opacity 0.2s ease;
             }
         }
     }
 
     &.menu-is-open {
         .main-navigation {
-            max-height: calc(100dvh - #{$header-height});
-            padding: 1.5rem 1rem 2rem;
             opacity: 1;
             pointer-events: auto;
-            transform: translateY(0);
             visibility: visible;
             transition-delay: 0s;
         }
 
+        // outer bars converge on the middle one's center (9px away) and cross;
+        // the middle bar fades out underneath them
         .menu-toggle__icon span:first-child {
-            transform: translateY(2.5px) rotate(45deg);
+            transform: translateY(9px) rotate(45deg);
+        }
+
+        .menu-toggle__icon span:nth-child(2) {
+            opacity: 0;
         }
 
         .menu-toggle__icon span:last-child {
-            transform: translateY(-2.5px) rotate(-45deg);
+            transform: translateY(-9px) rotate(-45deg);
         }
     }
 
@@ -92,14 +119,14 @@ $header-height: 64px;
         .main-navigation {
             position: static;
             display: block;
-            max-height: none;
+            height: auto;
             overflow: visible;
             padding: 0;
             background: transparent;
             opacity: 1;
             pointer-events: auto;
-            transform: none;
             visibility: visible;
+            will-change: auto;
             transition: none;
 
             .menu {
@@ -112,10 +139,59 @@ $header-height: 64px;
             }
         }
 
+        // drops the mobile wrapper, and its .container sizing, from the layout
+        .main-navigation__inner {
+            display: contents;
+        }
+
+        .main-navigation__meta {
+            display: none;
+        }
+
         .menu-toggle {
             display: none;
         }
     }
+}
+
+// no transitions while resizing, or crossing 992px animates the panel out of
+// its desktop state. Skipped when open: on mobile the URL bar collapsing fires
+// a resize that would snap the opening mid-flight.
+body.is-resizing .site-header:not(.menu-is-open),
+body.is-resizing .site-header:not(.menu-is-open) * {
+    transition: none !important;
+    animation: none !important;
+}
+
+// first paint only: apply the initial scroll state instantly, so loading
+// mid-page doesn't fade in from the unscrolled colour (see main.js)
+.site-header.is-init,
+.site-header.is-init * {
+    transition: none !important;
+}
+
+// mobile menu items: cropped slide-up reveal, same technique as the
+// intervento page title (overflow:hidden parent + translateY(100%) child)
+@media (max-width: 991.98px) {
+    .main-navigation .menu li {
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 991.98px) and (prefers-reduced-motion: no-preference) {
+    #masthead.menu-is-open .main-navigation .menu li a {
+        transform: translateY(100%);
+        animation: menu-item-in 0.5s ease-in-out forwards;
+    }
+
+    #masthead.menu-is-open .main-navigation .menu li:nth-child(2) a { animation-delay: 0.06s; }
+    #masthead.menu-is-open .main-navigation .menu li:nth-child(3) a { animation-delay: 0.12s; }
+    #masthead.menu-is-open .main-navigation .menu li:nth-child(4) a { animation-delay: 0.18s; }
+    #masthead.menu-is-open .main-navigation .menu li:nth-child(5) a { animation-delay: 0.24s; }
+}
+
+@keyframes menu-item-in {
+    to { transform: translateY(0); }
 }
 
 // .site-content {
@@ -134,12 +210,6 @@ $header-height: 64px;
 
         &.is-scrolled {
             background-color: $color-weiss;
-        }
-
-        @media (max-width: 991.98px) {
-            .main-navigation { background-color: $color-bg; }
-
-            &.is-scrolled .main-navigation { background-color: $color-weiss; }
         }
     }
 
@@ -166,7 +236,7 @@ $header-height: 64px;
 
     .site-logo-white,
     .site-logo-black {
-        transition: opacity 0.35s ease;
+        transition: opacity $header-fade $header-ease;
     }
 
     .site-logo-black {
@@ -177,7 +247,11 @@ $header-height: 64px;
         .site-logo-white { opacity: 0; }
         .site-logo-black { opacity: 1; }
 
-        .main-navigation a { color: $color-text; }
+        // desktop only: on mobile the open panel sets its own colours
+        @media (min-width: 992px) {
+            .main-navigation a { color: $color-text; }
+        }
+
         .menu-toggle { color: $color-text; }
     }
 
@@ -190,4 +264,23 @@ $header-height: 64px;
     body:not(.home) .site-content {
         padding-top: $header-height;
     }
+}
+
+// no background change here on purpose — the panel covers the header row, so
+// the dark background comes from it alone and there's only one fade
+#masthead.menu-is-open {
+    .menu-toggle {
+        color: $color-weiss;
+    }
+
+    // recolors the black logo used on inner pages
+    .site-logo-black img {
+        filter: brightness(0) invert(1);
+    }
+}
+
+// must fade at the panel's rate, or the logo snaps to white while the header
+// is still light and reads as a flash
+.site-logo-black img {
+    transition: filter $header-fade $header-ease;
 }
