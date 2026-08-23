@@ -9,16 +9,16 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 ?>
 
 <?php if ($banner_photo) : ?>
-    <div class="hero-photo mb-b">
+    <div class="hero-photo mb-5 mb-lg-b">
         <img src="<?php echo esc_url($banner_photo['sizes']['large']); ?>"
              alt="<?php echo esc_attr($banner_photo['alt']); ?>"
              class="banner_photo">
     </div>
 <?php endif; ?>
 
-<div class="row">
+<div class="row g-5 g-lg-0">
 
-    <div class="col-lg-7 chi-siamo__main">
+    <div class="col-12 col-lg-7 chi-siamo__main">
 
         <div class="entry-content">
             <?php the_content(); ?>
@@ -26,7 +26,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 
     </div>
 
-    <aside class="col-lg-4 offset-lg-1 chi-siamo__dati d-flex flex-column justify-content-between gap-5">
+    <aside class="col-12 col-lg-4 offset-lg-1 chi-siamo__dati d-flex flex-column justify-content-between gap-5">
 
         <div class="chi-siamo__dati-list d-flex flex-column">
 
@@ -66,9 +66,9 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 
 
         <?php if ($articoli) : ?>
-            <div class="position-relative mt-g">
+            <div class="position-relative mt-5 mt-lg-g">
                 <h3 class="section-label d-flex align-items-center pb-2 position-absolute start-0 top-0"><?php pll_e('Articoli'); ?></h3>
-                <div class="intervento__articoli pt-b border-top">
+                <div class="intervento__articoli pt-4 pt-md-b border-top">
                     <?php foreach ($articoli as $aid) :
                         $a_url = get_field('url', $aid);
                         $a_dl  = (get_field('tipo_url', $aid) === 'download');
@@ -86,9 +86,9 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
         <?php endif; ?>
 
         <?php if ($pubblicazioni) : ?>
-            <div class="position-relative mt-g pb-5 border-bottom">
+            <div class="position-relative mt-5 mt-lg-g pb-5 border-bottom">
                 <h3 class="section-label d-flex align-items-center pb-2 position-absolute start-0 top-0"><?php pll_e('Pubblicazioni'); ?></h3>
-                <div class="chi-siamo__pubblicazioni pt-b border-top d-flex flex-column gap-b">
+                <div class="chi-siamo__pubblicazioni pt-4 pt-md-b border-top d-flex flex-column gap-5 gap-md-b">
                     <?php foreach ($pubblicazioni as $pid) :
                         $p_sottotitolo = get_field('sottotitolo', $pid);
                         $p_copertina   = get_field('copertina', $pid);

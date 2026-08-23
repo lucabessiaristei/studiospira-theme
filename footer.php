@@ -10,9 +10,9 @@
         </div>
 
         <div class="footer-main bg-bg dark text-weiss">
-            <div class="container px-4 pt-a pb-5 d-flex flex-column gap-a align-items-center">
+            <div class="container px-4 pt-5 pt-md-a pb-5 d-flex flex-column gap-5 gap-md-a align-items-center">
 
-                <div class="w-100 row row-cols-1 row-cols-md-4 g-4">
+                <div class="w-100 row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
 
                     <div class="col">
                         <?php echo sp_logo('white'); ?>

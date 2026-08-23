@@ -140,6 +140,7 @@ a:not(.sp-btn):not(.footer-menu a):not(header nav a):has(img) {
 header nav a {
     @include sp-base;
     color: $color-text;
+    background-color: transparent;
     font-size: 14px;
     text-transform: uppercase;
 

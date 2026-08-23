@@ -12,7 +12,7 @@
 <div id="page" class="site">
 
     <header id="masthead" class="site-header fixed-top">
-        <div class="h-100 d-flex justify-content-between py-3 px-4 align-items-center">
+        <div class="container h-100 d-flex justify-content-between py-3 px-4 align-items-center">
             <div class="site-branding h-100">
                 <?php if (is_front_page()) : ?>
                     <?php echo sp_logo('white'); ?>
@@ -22,8 +22,16 @@
                 <?php endif; ?>
             </div>
 
-            <nav class="main-navigation">
-                <?php wp_nav_menu(['theme_location' => 'primary']); ?>
+            <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
+                <span class="menu-toggle__label">Menu</span>
+                <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
+            </button>
+
+            <nav class="main-navigation" aria-label="Primary navigation">
+                <?php wp_nav_menu([
+                    'theme_location' => 'primary',
+                    'menu_id'        => 'primary-menu',
+                ]); ?>
             </nav>
         </div>
     </header>

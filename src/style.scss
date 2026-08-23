@@ -50,6 +50,12 @@ h5 { @include type('h5'); }
 
 .display { @include type('display-1'); }
 
+@media (max-width: 767.98px) {
+    .display {
+        @include type('h1');
+    }
+}
+
 // type utility classes (apply to any element)
 // size + line-height only — font-family/weight are set separately (see .primary-font*/.secondary-font)
 @each $name, $t in $type-scale {

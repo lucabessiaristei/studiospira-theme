@@ -1,4 +1,6 @@
 .breadcrumb {
+    margin: 0;
+
     li,
     a {
         @include type('mono-body-s');
@@ -6,5 +8,15 @@
 
     li:not(:last-child)::after {
         content: "/";
+        margin-left: 0.5rem;
+        color: $color-textlight;
+    }
+
+    @media (max-width: 767.98px) {
+        li,
+        a {
+            font-size: 12px;
+            line-height: 1.2;
+        }
     }
 }

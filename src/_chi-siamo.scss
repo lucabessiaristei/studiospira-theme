@@ -6,6 +6,10 @@
     }
 
     &__pubblicazione {
+        @media (max-width: 767.98px) {
+            flex-direction: column;
+        }
+
         &-info {
             flex: 1 1 auto;
             min-width: 0;
@@ -14,6 +18,10 @@
         &-cover {
             flex: none;
             width: 200px;
+
+            @media (max-width: 767.98px) {
+                width: min(100%, 260px);
+            }
 
             &-img {
                 display: block;

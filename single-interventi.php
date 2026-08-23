@@ -23,7 +23,7 @@ if (!is_array($galleria)) $galleria = [];
 <main class="intervento">
 
     <section class="intervento__hero">
-        <div class="container px-4 py-a pt-md-f pb-md-d">
+        <div class="container px-4 py-4 py-md-a pt-lg-f pb-lg-d">
             <?php get_template_part('template-parts/headline'); ?>
         </div>
         <?php if ($copertina) : ?>
@@ -35,18 +35,18 @@ if (!is_array($galleria)) $galleria = [];
         <?php endif; ?>
     </section>
 
-    <section class="intervento__body py-a pt-md-a pb-md-g">
+    <section class="intervento__body py-4 py-md-a pb-lg-g">
         <div class="container px-4">
-            <div class="row">
+            <div class="row g-5 g-lg-0">
 
-                <div class="col-lg-7 intervento__main">
+                <div class="col-12 col-lg-7 intervento__main">
 
                     <div class="intervento__descrizione">
                         <?php the_content(); ?>
                     </div>
 
                     <?php if ($articoli) : ?>
-                        <div class="intervento__articoli mt-f">
+                        <div class="intervento__articoli mt-5 mt-lg-f">
                             <h6 class="secondary-font fs-mono-body d-block mb-3 text-accent"><?php pll_e('Articoli'); ?></h6>
                             <?php foreach ($articoli as $aid) :
                                 $a_url = get_field('url', $aid);
@@ -65,7 +65,7 @@ if (!is_array($galleria)) $galleria = [];
 
                 </div>
 
-                <aside class="col-lg-4 offset-lg-1 intervento__dati d-flex flex-column">
+                <aside class="col-12 col-lg-4 offset-lg-1 intervento__dati d-flex flex-column">
 
                     <?php if ($anno_inizio) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
@@ -137,9 +137,9 @@ if (!is_array($galleria)) $galleria = [];
     </section>
 
     <?php if ($galleria) : ?>
-        <section class="intervento__galleria pb-g">
+        <section class="intervento__galleria pb-a pb-lg-g">
             <div class="container px-4">
-                <div class="row row-cols-3 g-4 align-items-start">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-md-4 align-items-start">
                     <?php foreach ($galleria as $img_id) : ?>
                         <div class="col">
                             <a href="<?php echo esc_url(wp_get_attachment_image_url($img_id, 'large')); ?>"
