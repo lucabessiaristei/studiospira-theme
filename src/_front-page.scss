@@ -40,15 +40,6 @@
                 color: $color-bg;
             }
 
-            @media (max-width: 767.98px) {
-                p,
-                b,
-                strong {
-                    font-size: 32px;
-                    line-height: 1.05;
-                }
-            }
-
             p + p {
                 margin-top: 24px;
             }
@@ -58,6 +49,18 @@
                 font-family: $secondary-font;
                 font-weight: $secondary-font-regular;
                 color: $color-accent
+            }
+
+            // keep last: media queries add no specificity, so this only beats
+            // the b/strong rule above by source order — when it sat earlier the
+            // 40px from type('h1') won and mobile stayed at desktop size
+            @media (max-width: 767.98px) {
+                p,
+                b,
+                strong {
+                    font-size: 32px;
+                    line-height: 1.05;
+                }
             }
         }
     }
@@ -71,8 +74,14 @@
             aspect-ratio: 1;
         }
 
-        &:hover &-img::after {
+        &:active &-img::after {
             border-width: 15px;
+        }
+
+        @media (hover: hover) {
+            &:hover &-img::after {
+                border-width: 15px;
+            }
         }
 
         &-title {

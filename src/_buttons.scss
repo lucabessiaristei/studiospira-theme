@@ -15,6 +15,10 @@ $icon-h-nav: 14px;
     mask: url('../assets/icons/spiral.svg') no-repeat center / contain;
     -webkit-mask: url('../assets/icons/spiral.svg') no-repeat center / contain;
     transform-origin: unquote($origin);
+    // stay composited: without this the icon is promoted to a layer only while
+    // rotating, and any icon sitting on a sub-pixel y snaps by up to 1px on the
+    // way in and back out
+    will-change: transform;
     transition: transform 0.4s ease, background-color 0.35s ease;
 }
 
@@ -37,7 +41,7 @@ $icon-h-nav: 14px;
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.35rem;
     font-family: $primary-font;
     font-weight: $primary-font-regular;
     text-decoration: none;
@@ -46,11 +50,14 @@ $icon-h-nav: 14px;
 }
 
 @mixin sp-hover {
-    &:hover::before,
     &:active::before,
     &[aria-current="true"]::before { transform: scaleX(1); }
-    &:hover::after,
     &:active::after { transform: rotate(180deg); }
+
+    @media (hover: hover) {
+        &:hover::before { transform: scaleX(1); }
+        &:hover::after { transform: rotate(180deg); }
+    }
 }
 
 @mixin sp-ghost {
@@ -59,12 +66,12 @@ $icon-h-nav: 14px;
     height: auto;
     font-size: 16px;
 
-    &::before { @include sp-underline(-0.2rem, calc(#{$icon-w} + 0.25rem), 0); }
+    &::before { @include sp-underline(-0.15rem, calc(#{$icon-w} + 0.35rem), 0); }
     &::after  { @include sp-icon($icon-w, $icon-h); }
 }
 
-// links
-a:not(.sp-btn):not(.footer-menu a):not(header nav a):not(:has(img)) {
+// links — exclusions wrapped in :where() to keep them specificity-zero
+a:not(:where(.sp-btn)):not(:where(.footer-menu a)):not(:where(header nav .menu a)):not(:has(img)) {
     position: relative;
     color: inherit;
     font-style: inherit;
@@ -74,12 +81,14 @@ a:not(.sp-btn):not(.footer-menu a):not(header nav a):not(:has(img)) {
     text-decoration-thickness: 1px;
     transition: text-decoration-color 0.3s ease;
 
-    &:hover {
-        text-decoration-color: transparent;
+    @media (hover: hover) {
+        &:hover {
+            text-decoration-color: transparent;
+        }
     }
 }
 
-a:not(.sp-btn):not(.footer-menu a):not(header nav a):has(img) {
+a:not(:where(.sp-btn)):not(:where(.footer-menu a)):not(:where(header nav .menu a)):has(img) {
     position: relative;
     color: inherit;
     text-decoration: unset;
@@ -103,13 +112,18 @@ a:not(.sp-btn):not(.footer-menu a):not(header nav a):has(img) {
         position: relative;
         display: inline-block;
 
-        &::before { @include sp-underline(-0.2rem, 0, 0); }
+        &::before { @include sp-underline(-0.15rem, 0, 0); }
     }
 
-    &:hover &__label::before,
     &:active &__label::before,
     &[aria-current="true"] &__label::before {
         transform: scaleX(1);
+    }
+
+    @media (hover: hover) {
+        &:hover &__label::before {
+            transform: scaleX(1);
+        }
     }
 
     .dark & {
@@ -127,6 +141,23 @@ a:not(.sp-btn):not(.footer-menu a):not(header nav a):has(img) {
     @include sp-hover;
 }
 
+// compact variant: smaller text and nav-sized spiral. Combines with .ghost,
+// which keeps its own zero padding.
+.sp-btn.sp-small {
+    font-size: 16px;
+
+    &:not(.ghost) { padding: 0.6rem 1.3rem 0.75rem 1.1rem; }
+
+    &::after { width: $icon-w-nav; height: $icon-h-nav; }
+
+    // position only — re-including sp-underline here would also re-declare
+    // transform: scaleX(0) after sp-hover's rules and pin the underline hidden
+    &::before {
+        bottom: -0.15rem;
+        left: calc(#{$icon-w-nav} + 0.35rem);
+    }
+}
+
 .footer-menu a {
     @include sp-base;
     @include sp-ghost;
@@ -136,27 +167,44 @@ a:not(.sp-btn):not(.footer-menu a):not(header nav a):has(img) {
     @include sp-hover;
 }
 
-// header nav
-header nav a {
+// header nav — scoped to .menu a so it skips the mobile meta box links
+header nav .menu a {
     @include sp-base;
     color: $color-text;
     background-color: transparent;
     font-size: 14px;
     text-transform: uppercase;
 
-    &::before { @include sp-underline(-0.2rem, calc(#{$icon-w-nav} + 0.25rem), 0); }
-    &::after  { @include sp-icon($icon-w-nav, $icon-h-nav, $color-accent ); }
+    &::before { @include sp-underline(-0.15rem, calc(#{$icon-w-nav} + 0.35rem), 0); }
+    &::after  { @include sp-icon($icon-w-nav, $icon-h-nav, $color-bg); }
 
     @include sp-hover;
 }
 
-header.is-scrolled nav a {
-    &::after  { @include sp-icon($icon-w-nav, $icon-h-nav, $color-bg); }
-} 
-
-.home header nav a {
+.home header nav .menu a {
     color: $color-weiss;
     transition: color 0.35s ease;
+}
+
+// the header is only dark on the home hero; elsewhere the spiral stays bg
+.home header:not(.is-scrolled) nav .menu a::after {
+    background-color: $color-accent;
+}
+
+// mobile menu: items read as h3-medium, not desktop's spiral buttons
+@media (max-width: 991.98px) {
+    header nav .menu a {
+        @include type('h3');
+        font-weight: $primary-font-medium;
+        text-transform: none;
+        color: $color-weiss;
+        gap: 0;
+
+        &::before,
+        &::after {
+            content: none;
+        }
+    }
 }
 
 .sp-btn.no-underline::before,

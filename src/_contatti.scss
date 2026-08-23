@@ -2,7 +2,7 @@
 
     .form-label {
         display: block;
-        @include type('mono-body-s');
+        @include type('mono-body-small');
         font-family: $secondary-font;
         text-transform: capitalize;
         letter-spacing: 0.04em;

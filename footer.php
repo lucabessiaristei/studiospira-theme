@@ -50,7 +50,7 @@
                             <div class="footer-lang d-flex flex-column-reverse gap-2">
                                 <?php foreach ($footer_languages as $lang) : ?>
                                     <a href="<?php echo esc_url($lang['url']); ?>"
-                                       class="sp-btn ghost"
+                                       class="sp-btn ghost sp-small"
                                        <?php echo $lang['current_lang'] ? 'aria-current="true"' : ''; ?>>
                                         <?php echo esc_html($lang['name']); ?>
                                     </a>

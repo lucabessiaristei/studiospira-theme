@@ -82,7 +82,7 @@ $type-scale: (
   'body':        (16px, normal,  $primary-font,   $primary-font-regular),
   'body-small':  (14px, normal,  $primary-font,   $primary-font-regular),
   'mono-body':   (16px, normal,  $secondary-font, $secondary-font-regular),
-  'mono-body-s': (14px, normal,  $secondary-font, $secondary-font-regular),
+  'mono-body-small': (14px, normal,  $secondary-font, $secondary-font-regular),
 );
 
 @mixin type($name) {

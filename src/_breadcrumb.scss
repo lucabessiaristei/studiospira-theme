@@ -3,7 +3,7 @@
 
     li,
     a {
-        @include type('mono-body-s');
+        @include type('mono-body-small');
     }
 
     li:not(:last-child)::after {
