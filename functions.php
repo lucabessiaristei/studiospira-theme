@@ -27,7 +27,7 @@ add_action('after_setup_theme', function() {
 });
 
 function sp_logo($variant = 'black') {
-    $file = ($variant === 'white') ? 'spira-logo-bianco.svg' : 'spira-logo-nero.svg';
+    $file = ($variant === 'white') ? 'spira-logo-bianco-thick.svg' : 'spira-logo-nero-thick.svg';
     $url = get_stylesheet_directory_uri() . '/assets/logo/' . $file;
     return '<a href="' . esc_url(home_url('/')) . '" class="site-logo site-logo-' . esc_attr($variant) . '">'
          . '<img src="' . esc_url($url) . '" alt="' . esc_attr(get_bloginfo('name')) . '">'
