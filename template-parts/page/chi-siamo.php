@@ -9,16 +9,16 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 ?>
 
 <?php if ($banner_photo) : ?>
-    <div class="hero-photo mb-5 mb-lg-b">
+    <div class="hero-photo mb-5 mb-lg-a">
         <img src="<?php echo esc_url($banner_photo['sizes']['large']); ?>"
              alt="<?php echo esc_attr($banner_photo['alt']); ?>"
              class="banner_photo">
     </div>
 <?php endif; ?>
 
-<div class="row g-5 g-lg-0">
+<div class="row g-0">
 
-    <div class="col-12 col-lg-7 chi-siamo__main">
+    <div class="chi-siamo__main col-12 col-lg-7 mt-5 mt-lg-0">
 
         <div class="entry-content">
             <?php the_content(); ?>
@@ -26,9 +26,9 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 
     </div>
 
-    <aside class="col-12 col-lg-4 offset-lg-1 chi-siamo__dati d-flex flex-column justify-content-between gap-5">
+    <aside class="chi-siamo__dati col-12 col-lg-4 offset-lg-1 d-lg-flex flex-column justify-content-between gap-5">
 
-        <div class="chi-siamo__dati-list d-flex flex-column">
+        <div class="chi-siamo__dati-list w-100 order-first d-flex flex-column">
 
             <?php if ($fondazione) : ?>
                 <div class="intervento__dato d-grid align-items-baseline gap-3">
@@ -54,9 +54,9 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
         </div>
 
         <?php if ($certificazione) : ?>
-            <div class="w-100">
-                <img class="h-auto w-100 mb-4" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/certif.jpg'); ?>">
-                <p class="chi-siamo__certificazione fs-body-small text-textlight mb-0"><?php echo nl2br(esc_html($certificazione)); ?></p>
+            <div class="chi-siamo__certificazione w-100 mt-5 mt-lg-0">
+                <img class="chi-siamo__certificazione-img mb-4" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/certif.jpg'); ?>" alt="">
+                <p class="chi-siamo__certificazione-testo fs-body-small text-textlight mb-0"><?php echo nl2br(esc_html($certificazione)); ?></p>
             </div>
         <?php endif; ?>
 
@@ -64,16 +64,15 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 
     <div class="col-12">
 
-
         <?php if ($articoli) : ?>
-            <div class="position-relative mt-5 mt-lg-g">
-                <h3 class="section-label d-flex align-items-center pb-2 position-absolute start-0 top-0"><?php pll_e('Articoli'); ?></h3>
-                <div class="intervento__articoli pt-4 pt-md-b border-top">
+            <div class="mt-a mt-lg-f">
+                <h3 class="section-label pb-3 d-flex align-items-center"><?php pll_e('Articoli'); ?></h3>
+                <div class="intervento__articoli pt-4 pt-lg-5 border-top">
                     <?php foreach ($articoli as $aid) :
                         $a_url = get_field('url', $aid);
                         $a_dl  = (get_field('tipo_url', $aid) === 'download');
                     ?>
-                        <div class="intervento__articolo d-flex justify-content-between align-items-center gap-3 py-3 border-bottom">
+                        <div class="intervento__articolo py-3 d-flex justify-content-between align-items-center gap-3 border-bottom">
                             <span><?php echo esc_html(get_the_title($aid)); ?></span>
                             <a href="<?php echo esc_url($a_url); ?>" class="sp-btn ghost no-underline"
                                <?php echo $a_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
@@ -86,9 +85,9 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
         <?php endif; ?>
 
         <?php if ($pubblicazioni) : ?>
-            <div class="position-relative mt-5 mt-lg-g pb-5 border-bottom">
-                <h3 class="section-label d-flex align-items-center pb-2 position-absolute start-0 top-0"><?php pll_e('Pubblicazioni'); ?></h3>
-                <div class="chi-siamo__pubblicazioni pt-4 pt-md-b border-top d-flex flex-column gap-5 gap-md-b">
+            <div class="mt-a mt-lg-f pb-5 border-bottom">
+                <h3 class="section-label pb-3 d-flex align-items-center"><?php pll_e('Pubblicazioni'); ?></h3>
+                <div class="chi-siamo__pubblicazioni pt-5 pt-lg-a d-flex flex-column gap-5 gap-md-b border-top">
                     <?php foreach ($pubblicazioni as $pid) :
                         $p_sottotitolo = get_field('sottotitolo', $pid);
                         $p_copertina   = get_field('copertina', $pid);
@@ -106,7 +105,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                                 <h4 class="mb-3"><?php echo esc_html(get_the_title($pid)); ?></h4>
 
                                 <?php if ($p_sottotitolo) : ?>
-                                    <p class="text-textlight mb-5"><?php echo esc_html($p_sottotitolo); ?></p>
+                                    <p class="mb-5 text-textlight"><?php echo esc_html($p_sottotitolo); ?></p>
                                 <?php endif; ?>
 
                                 <div class="chi-siamo__pubblicazione-dati mt-3 d-flex flex-column gap-2">

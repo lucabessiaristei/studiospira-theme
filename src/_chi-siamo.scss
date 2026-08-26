@@ -1,8 +1,25 @@
 .chi-siamo {
 
+    // sotto lg l'aside si dissolve nella griglia: lista dati e certificazione
+    // diventano due righe indipendenti, cosi' la lista puo' salire sopra al testo
+    // (order-first) e la certificazione restare dopo. Nel markup l'aside usa
+    // d-lg-flex, altrimenti il !important di .d-flex vincerebbe su questo display
+    &__dati {
+        @media (max-width: 991.98px) {
+            display: contents;
+        }
+    }
+
     &__dati-list {
         // 0.9rem gap has no matching spacer step — same as .intervento__dati
         gap: 0.9rem;
+    }
+
+    &__certificazione-img {
+        display: block;
+        width: 100%;
+        max-width: 500px;
+        height: auto;
     }
 
     &__pubblicazione {
