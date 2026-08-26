@@ -21,5 +21,27 @@ $gutters: $spacers;
 @import "../node_modules/bootstrap/scss/containers";
 @import "../node_modules/bootstrap/scss/grid";
 @import "../node_modules/bootstrap/scss/utilities";
+
+// put the spacer scale on the height utility and make it responsive, so the
+// divider (and anything else) can use h-a / h-lg-b alongside the stock h-50.
+// position is responsive too: bootstrap ships it flat, so position-md-absolute
+// & co. would silently not exist
+$utilities: map-merge(
+  $utilities,
+  (
+    "height": map-merge(
+      map-get($utilities, "height"),
+      (
+        responsive: true,
+        values: map-merge(map-get(map-get($utilities, "height"), "values"), $spacers),
+      ),
+    ),
+    "position": map-merge(
+      map-get($utilities, "position"),
+      (responsive: true),
+    ),
+  )
+);
+
 @import "../node_modules/bootstrap/scss/helpers";
 @import "../node_modules/bootstrap/scss/utilities/api";
