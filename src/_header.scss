@@ -76,11 +76,11 @@ $header-ease: ease;
         transition: color $header-fade $header-ease;
         cursor: pointer;
 
-        // 3 bars, roughly square: 3x1px + 2x8px gap = 19px tall by 20px wide
+        // 3 bars: 3x1px + 2x6px gap = 15px tall by 20px wide
         &__icon {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             width: 20px;
 
             span {
@@ -103,7 +103,7 @@ $header-ease: ease;
         // outer bars converge on the middle one's center (9px away) and cross;
         // the middle bar fades out underneath them
         .menu-toggle__icon span:first-child {
-            transform: translateY(9px) rotate(45deg);
+            transform: translateY(7px) rotate(45deg);
         }
 
         .menu-toggle__icon span:nth-child(2) {
@@ -111,7 +111,7 @@ $header-ease: ease;
         }
 
         .menu-toggle__icon span:last-child {
-            transform: translateY(-9px) rotate(-45deg);
+            transform: translateY(-7px) rotate(-45deg);
         }
     }
 

@@ -8,8 +8,7 @@
 
     li:not(:last-child)::after {
         content: "/";
-        margin-left: 0.5rem;
-        color: $color-textlight;
+        // color: $color-textlight;
     }
 
     @media (max-width: 767.98px) {
