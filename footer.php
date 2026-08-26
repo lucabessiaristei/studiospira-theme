@@ -3,22 +3,22 @@
     <footer id="colophon" class="site-footer">
 
         <div class="footer-cta bg-accent">
-            <div class="container px-4 py-5 d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="container px-4 py-a d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between gap-4 text-center text-lg-start">
                 <h3 class="mb-0"><?php pll_e('Hai un edificio storico da restaurare?'); ?></h3>
                 <a href="<?php echo esc_url(home_url('/contatti')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Parlaci del tuo edificio'); ?></span></a>
             </div>
         </div>
 
-        <div class="footer-main bg-bg dark text-weiss">
-            <div class="container px-4 pt-5 pt-md-a pb-5 d-flex flex-column gap-5 gap-md-a align-items-center">
+        <div class="footer-main dark bg-bg text-weiss">
+            <div class="container px-4 py-5 pt-md-a d-flex flex-column gap-5 gap-md-a">
 
-                <div class="w-100 row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+                <div class="row gx-0 gy-5 w-100">
 
-                    <div class="col">
+                    <div class="col-12 col-lg-3">
                         <?php echo sp_logo('white'); ?>
                     </div>
 
-                    <div class="col">
+                    <div class="col-12 col-lg-3">
                         <?php wp_nav_menu([
                             'theme_location' => 'primary',
                             'container'      => false,
@@ -27,7 +27,7 @@
                         ]); ?>
                     </div>
 
-                    <div class="col">
+                    <div class="col-12 col-lg-3">
                         <?php get_template_part('template-parts/footer-contacts', null, ['variant' => 'dark']); ?>
                     </div>
 
@@ -38,7 +38,7 @@
                         get_option('sp_footer_piva'),
                     ]);
                     ?>
-                    <div class="col col d-flex flex-column gap-5 align-items-md-end text-md-end">
+                    <div class="col-12 col-lg-3 d-flex flex-column align-items-start align-items-lg-end gap-5 text-lg-end">
                         <?php if ($footer_legal_lines) : ?>
                             <p class="footer-fiscal fs-body-small text-weiss-75">
                                 <?php echo implode('<br>', array_map('esc_html', $footer_legal_lines)); ?>
@@ -61,7 +61,7 @@
 
                 </div>
 
-                <div class="footer-bottom d-flex flex-wrap align-items-center gap-4 gap-md-d fs-body-small text-weiss-75">
+                <div class="footer-bottom fs-body-small w-100 d-flex flex-column flex-lg-row justify-content-lg-center gap-4 gap-lg-d text-weiss-75">
                     <p class="mb-0">&copy; <?php echo esc_html(date('Y')); ?> Spira</p>
 
                     <nav class="footer-policies d-flex flex-wrap gap-4">

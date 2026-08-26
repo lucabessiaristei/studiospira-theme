@@ -4,9 +4,9 @@
 
     <?php $slug = get_post_field('post_name', get_the_ID()); ?>
 
-    <main id="primary" class="site-main pb-a pb-lg-g page-<?php echo esc_attr($slug); ?>">
+    <main id="primary" class="site-main pb-d pb-lg-g page-<?php echo esc_attr($slug); ?>">
 
-    <div class="container px-4 py-4 py-md-a pt-lg-f pb-lg-d">
+        <div class="container px-4 py-5 py-md-a pt-lg-f pb-lg-c">
             <?php get_template_part('template-parts/headline'); ?>
         </div>
 

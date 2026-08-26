@@ -9,5 +9,5 @@ $copertina  = get_field('copertina', $intervento->ID);
                  alt="<?php echo esc_attr($copertina['alt']); ?>">
         </span>
     <?php endif; ?>
-    <span class="front-page__intervento-title fs-body"><?php echo esc_html(get_the_title($intervento)); ?></span>
+    <span class="front-page__intervento-title fs-body mb-2"><?php echo esc_html(get_the_title($intervento)); ?></span>
 </a>

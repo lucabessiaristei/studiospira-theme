@@ -20,14 +20,14 @@ $galleria = get_post_meta(get_the_ID(), 'galleria', true);
 if (!is_array($galleria)) $galleria = [];
 ?>
 
-<main class="intervento">
+<main id="primary" class="site-main intervento">
 
     <section class="intervento__hero">
-        <div class="container px-4 py-4 py-md-a pt-lg-f pb-lg-d">
+        <div class="container px-4 py-5 py-md-a pt-lg-f pb-lg-c">
             <?php get_template_part('template-parts/headline'); ?>
         </div>
         <?php if ($copertina) : ?>
-            <div class="container px-4 hero-photo">
+            <div class="hero-photo container px-4">
                 <img src="<?php echo esc_url($copertina['sizes']['large']); ?>"
                      alt="<?php echo esc_attr($copertina['alt']); ?>"
                      class="banner_photo">
@@ -35,24 +35,24 @@ if (!is_array($galleria)) $galleria = [];
         <?php endif; ?>
     </section>
 
-    <section class="intervento__body py-4 py-md-a pb-lg-g">
+    <section class="intervento__body pt-5 pt-lg-a pb-b pb-lg-g">
         <div class="container px-4">
             <div class="row g-5 g-lg-0">
 
-                <div class="col-12 col-lg-7 intervento__main">
+                <div class="intervento__main col-12 col-lg-7 order-last order-lg-first">
 
                     <div class="intervento__descrizione">
                         <?php the_content(); ?>
                     </div>
 
                     <?php if ($articoli) : ?>
-                        <div class="intervento__articoli mt-5 mt-lg-f">
-                            <h6 class="secondary-font fs-mono-body d-block mb-3 text-accent"><?php pll_e('Articoli'); ?></h6>
+                        <div class="intervento__articoli mt-b mt-lg-f">
+                            <h6 class="secondary-font fs-mono-body-small mb-2 mb-lg-3 text-accent"><?php pll_e('Articoli'); ?></h6>
                             <?php foreach ($articoli as $aid) :
                                 $a_url = get_field('url', $aid);
                                 $a_dl  = (get_field('tipo_url', $aid) === 'download');
                             ?>
-                                <div class="intervento__articolo d-flex justify-content-between align-items-center gap-3 py-3 border-bottom">
+                                <div class="intervento__articolo py-3 d-flex justify-content-between align-items-center gap-3 border-bottom">
                                     <span><?php echo esc_html(get_the_title($aid)); ?></span>
                                     <a href="<?php echo esc_url($a_url); ?>" class="sp-btn ghost"
                                        <?php echo $a_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
@@ -65,7 +65,7 @@ if (!is_array($galleria)) $galleria = [];
 
                 </div>
 
-                <aside class="col-12 col-lg-4 offset-lg-1 intervento__dati d-flex flex-column">
+                <aside class="intervento__dati col-12 col-lg-4 offset-lg-1 d-flex flex-column">
 
                     <?php if ($anno_inizio) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
@@ -137,9 +137,9 @@ if (!is_array($galleria)) $galleria = [];
     </section>
 
     <?php if ($galleria) : ?>
-        <section class="intervento__galleria pb-a pb-lg-g">
+        <section class="intervento__galleria pb-d pb-lg-g">
             <div class="container px-4">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-md-4 align-items-start">
+                <div class="row row-cols-2 row-cols-lg-3 g-3 g-md-4 align-items-start">
                     <?php foreach ($galleria as $img_id) : ?>
                         <div class="col">
                             <a href="<?php echo esc_url(wp_get_attachment_image_url($img_id, 'large')); ?>"
@@ -175,17 +175,18 @@ if (!is_array($galleria)) $galleria = [];
     <?php if ($next_id) :
         $next_cop = get_field('copertina', $next_id);
     ?>
-        <section class="intervento__prossimo pb-a">
+        <section class="intervento__prossimo pb-d pb-lg-a">
             <div class="container px-4">
                 <div class="position-relative">
-                    <h3 class="section-label d-flex align-items-center pb-2 position-absolute start-0 top-0"><?php pll_e('Prossimo intervento'); ?></h3>
-                    <div class="intervento__prossimo-card pt-4 border-top">
+                    <h3 class="section-label pb-3"><?php pll_e('Prossimo intervento'); ?></h3>
+                    <div class="intervento__prossimo-card pt-4 d-flex flex-column flex-lg-row align-items-lg-center border-top">
                         <?php if ($next_cop) : ?>
-                            <img src="<?php echo esc_url($next_cop['sizes']['thumbnail']); ?>"
-                                 alt="<?php echo esc_attr($next_cop['alt']); ?>">
+                            <?php echo wp_get_attachment_image($next_cop['ID'], 'medium_large', false, [
+                                'alt'   => $next_cop['alt'],
+                            ]); ?>
                         <?php endif; ?>
-                        <h3 class="text-bg"><?php echo esc_html(get_the_title($next_id)); ?></h3>
-                        <p class="dark ms-auto">
+                        <h3 class="pt-3 pb-4 py-lg-0 text-bg"><?php echo esc_html(get_the_title($next_id)); ?></h3>
+                        <p class="dark ms-lg-auto">
                             <a href="<?php echo esc_url(get_permalink($next_id)); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Esplora intervento'); ?></span></a>
                         </p>
                     </div>
