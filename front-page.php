@@ -57,8 +57,8 @@ $testo_2             = get_field('testo_2');
 
                     <div class="pt-4 pt-md-5 pt-lg-a pt-xxl-b pb-md-4 border-top">
 
-                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d align-items-end">
-                            <?php foreach ([...$interventi_evidenza, ...$interventi_evidenza, ...$interventi_evidenza] as $intervento) : // TEMP: x3 per test layout ?>
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d intervento-cards">
+                            <?php foreach ($interventi_evidenza as $intervento) : ?>
                                 <div class="col">
                                     <?php get_template_part('template-parts/intervento-card', null, ['intervento' => $intervento]); ?>
                                 </div>

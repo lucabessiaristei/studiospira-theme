@@ -15,7 +15,7 @@
                 <?php get_template_part('template-parts/interventi-filters'); ?>
 
                 <div class="interventi-grid-wrap pt-5 pt-lg-a pt-xxl-b">
-                    <div class="interventi-grid row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d">
+                    <div class="interventi-grid intervento-cards row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d">
                         <?php while (have_posts()) :
                             the_post();
                             $servizi_ids = get_field('servizi'); // relationship, array of IDs

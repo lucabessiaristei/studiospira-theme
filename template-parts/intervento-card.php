@@ -2,7 +2,7 @@
 $intervento = $args['intervento'];
 $copertina  = get_field('copertina', $intervento->ID);
 ?>
-<a href="<?php echo esc_url(get_permalink($intervento)); ?>" class="front-page__intervento d-flex flex-column gap-3">
+<a href="<?php echo esc_url(get_permalink($intervento)); ?>" class="front-page__intervento">
     <?php if ($copertina) : ?>
         <span class="front-page__intervento-img hover-border-img">
             <img src="<?php echo esc_url($copertina['sizes']['large']); ?>"

@@ -101,6 +101,52 @@
     }
 }
 
+// intervento card grids (home featured + interventi archive): each card spans
+// two subgrid rows, so within a row every photo sits on a shared bottom edge
+// and every title starts on a shared line, however many lines the titles run.
+// The Bootstrap row/gx/gy classes stay for their --bs-gutter-* variables; the
+// flex gutter margins/padding they add are cancelled here.
+.intervento-cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--bs-gutter-x);
+    row-gap: var(--bs-gutter-y);
+    margin: 0;
+
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 992px) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    > .col {
+        display: grid;
+        grid-row: span 2;
+        grid-template-rows: subgrid;
+        row-gap: 1rem;
+        width: auto;
+        margin: 0;
+        padding: 0;
+    }
+
+    .front-page__intervento {
+        display: grid;
+        grid-row: span 2;
+        grid-template-rows: subgrid;
+    }
+
+    .front-page__intervento-img {
+        align-self: end;
+    }
+
+    .front-page__intervento-title {
+        grid-row: 2; // stays in the title row even when a card has no photo
+        align-self: start;
+    }
+}
+
 // home load-in animation — skipped entirely for reduced-motion users, who get
 // the plain final state defined above (nothing pre-hidden outside this block)
 @media (prefers-reduced-motion: no-preference) {
