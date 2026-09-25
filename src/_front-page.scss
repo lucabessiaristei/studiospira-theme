@@ -74,8 +74,14 @@
         color: inherit;
 
         &-img {
+            display: block;
             width: 100%;
-            aspect-ratio: 1;
+            max-height: 420px; // caps portrait-oriented photos so they don't tower over the rest of the row
+            overflow: hidden;
+
+            img {
+                height: auto;
+            }
         }
 
         &:active &-img::after {

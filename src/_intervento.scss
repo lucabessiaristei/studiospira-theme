@@ -437,7 +437,6 @@
 
     &__breadcrumb {
         @include type('mono-body-small');
-        letter-spacing: 0.04em;
 
         a {
             color: inherit;

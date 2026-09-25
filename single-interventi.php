@@ -13,8 +13,8 @@ $categoria    = get_field('categoria');
 $servizi      = get_field('servizi');   // relationship, array of IDs
 $articoli     = get_field('articoli');  // relationship, array of IDs
 
-$destinazioni = wp_get_post_terms(get_the_ID(), 'destinazione_uso', ['fields' => 'names']);
-if (is_wp_error($destinazioni)) $destinazioni = [];
+$destinazioni = wp_get_post_terms(get_the_ID(), 'destinazione_uso');
+$destinazioni = is_wp_error($destinazioni) ? [] : array_map('sp_term_name', $destinazioni);
 
 $galleria = get_post_meta(get_the_ID(), 'galleria', true);
 if (!is_array($galleria)) $galleria = [];
@@ -53,7 +53,7 @@ if (!is_array($galleria)) $galleria = [];
                                 $a_dl  = (get_field('tipo_url', $aid) === 'download');
                             ?>
                                 <div class="intervento__articolo py-3 d-flex justify-content-between align-items-center gap-3 border-bottom">
-                                    <span><?php echo esc_html(get_the_title($aid)); ?></span>
+                                    <span><?php echo esc_html(sp_title_i18n($aid)); ?></span>
                                     <a href="<?php echo esc_url($a_url); ?>" class="sp-btn ghost"
                                        <?php echo $a_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
                                         <?php pll_e('Leggi articolo'); ?>
@@ -69,63 +69,63 @@ if (!is_array($galleria)) $galleria = [];
 
                     <?php if ($anno_inizio) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Anno inizio</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Anno inizio'); ?></span>
                             <span><?php echo esc_html($anno_inizio); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($anno_fine) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Anno fine</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Anno fine'); ?></span>
                             <span><?php echo esc_html($anno_fine); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($posizione) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Posizione</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Posizione'); ?></span>
                             <span><?php echo esc_html($posizione); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($destinazioni) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Destinazione d'uso</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Destinazione d\'uso'); ?></span>
                             <span><?php echo esc_html(implode(', ', $destinazioni)); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($committenza) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Committenza</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Committenza'); ?></span>
                             <span><?php echo esc_html($committenza); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($servizi) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Servizi</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Servizi'); ?></span>
                             <span><?php echo esc_html(implode(', ', array_map('get_the_title', $servizi))); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($team) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Team</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Team'); ?></span>
                             <span><?php echo esc_html($team); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($budget) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Budget</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Budget'); ?></span>
                             <span><?php echo esc_html($budget); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($categoria) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
-                            <span class="secondary-font fs-mono-body text-textlight">Categoria</span>
+                            <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Categoria'); ?></span>
                             <span><?php echo esc_html($categoria); ?></span>
                         </div>
                     <?php endif; ?>
@@ -139,17 +139,21 @@ if (!is_array($galleria)) $galleria = [];
     <?php if ($galleria) : ?>
         <section class="intervento__galleria pb-d pb-lg-g">
             <div class="container px-4">
-                <div class="row row-cols-2 row-cols-lg-3 g-3 g-md-4 align-items-start">
-                    <?php foreach ($galleria as $img_id) : ?>
-                        <div class="col">
-                            <a href="<?php echo esc_url(wp_get_attachment_image_url($img_id, 'large')); ?>"
-                               data-lightbox="galleria-<?php the_ID(); ?>">
-                                <span class="intervento__galleria-img hover-border-img">
-                                    <?php echo wp_get_attachment_image($img_id, 'medium'); ?>
-                                </span>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
+                <h3 class="section-label pb-3 d-flex align-items-center"><?php pll_e('Galleria'); ?></h3>
+
+                <div class="pt-4 pt-lg-5 border-top">
+                    <div class="row row-cols-2 row-cols-lg-3 g-3 g-md-4 align-items-start">
+                        <?php foreach ($galleria as $img_id) : ?>
+                            <div class="col">
+                                <a href="<?php echo esc_url(wp_get_attachment_image_url($img_id, 'large')); ?>"
+                                   data-lightbox="galleria-<?php the_ID(); ?>">
+                                    <span class="intervento__galleria-img hover-border-img">
+                                        <?php echo wp_get_attachment_image($img_id, 'medium'); ?>
+                                    </span>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </section>

@@ -19,26 +19,9 @@ add_action('init', function() {
     ]);
 });
 
+// deliberately NOT translatable: one pubblicazione serves both languages, with
+// the English texts in the "_en" fields (see i18n-fields.php)
 add_filter('pll_get_post_types', function($post_types) {
-    $post_types['pubblicazioni'] = 'pubblicazioni';
+    unset($post_types['pubblicazioni']);
     return $post_types;
-});
-
-// copia tutti i campi ACF (e meta nativi) alle traduzioni invece di tradurli
-add_filter('pll_copy_post_metas', function($metas, $sync) {
-    $pubblicazioni_metas = [
-        'sottotitolo',
-        'copertina',
-        'a_cura_di',
-        'editore',
-        'anno',
-        'isbn',
-        'pagine',
-        'info',
-        'tipo_url',
-        'url',
-        '_thumbnail_id',
-        'menu_order',
-    ];
-    return array_merge($metas, $pubblicazioni_metas);
-}, 10, 2);
+}, 99);

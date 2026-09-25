@@ -155,6 +155,12 @@
     var counterEl = root.querySelector('.lightbox__counter');
     var prevBtn   = root.querySelector('[data-lightbox-prev]');
     var nextBtn   = root.querySelector('[data-lightbox-next]');
+    var container = root.querySelector('.lightbox__container');
+    var track     = root.querySelector('.lightbox__track');
+
+    // due modi di navigare: da md in su crossfade comandato dalle frecce, sotto
+    // md uno scroller orizzontale che si trascina e gira all'infinito
+    var mqMobile = window.matchMedia('(max-width: 767.98px)');
 
     var groups = {};
     var counts = {};
@@ -176,16 +182,26 @@
     var currentGroup = null;
     var currentIndex = 0;
     var activePos    = 0;
+    var scrollTimer  = null;
+
+    function items() {
+        return currentGroup === null ? [] : groups[currentGroup];
+    }
+
+    function setCounter() {
+        counterEl.textContent = (currentIndex + 1) + ' / ' + items().length;
+    }
 
     function preload(index) {
-        var items = groups[currentGroup];
-        var item = items[index];
+        var item = items()[index];
         if (item) (new Image()).src = item.href;
     }
 
-    function render() {
-        var items = groups[currentGroup];
-        var item = items[currentIndex];
+    // --- crossfade, da md in su ---
+
+    function renderFade() {
+        var list = items();
+        var item = list[currentIndex];
 
         var outgoing = imgEls[activePos];
         var incoming = imgEls[1 - activePos];
@@ -198,14 +214,163 @@
         incoming.alt = item.alt;
         activePos = 1 - activePos;
 
-        counterEl.textContent = (currentIndex + 1) + ' / ' + items.length;
+        preload((currentIndex + 1) % list.length);
+        preload((currentIndex - 1 + list.length) % list.length);
+    }
 
-        var loopable = items.length > 1;
+    // --- scroller infinito, sotto md ---
+
+    // ordine [ultima, ...tutte, prima]: arrivati su un clone si salta di colpo
+    // sulla slide vera corrispondente, cosi' lo scorrimento non ha capolinea
+    function buildTrack() {
+        var list = items();
+        var slides = list.length > 1
+            ? [list[list.length - 1]].concat(list, [list[0]])
+            : list;
+
+        track.innerHTML = '';
+
+        slides.forEach(function (item) {
+            var slide = document.createElement('div');
+            var img   = document.createElement('img');
+
+            slide.className = 'lightbox__slide';
+            img.src = item.href;
+            img.alt = item.alt;
+            img.loading = 'lazy';
+
+            slide.appendChild(img);
+            track.appendChild(slide);
+        });
+    }
+
+    function positionTrack() {
+        var offset = items().length > 1 ? 1 : 0;
+
+        stopGlide();
+        track.scrollLeft = (currentIndex + offset) * track.clientWidth;
+    }
+
+    // discesa in ease-out sulla slide: lo snap del browser fermava di colpo,
+    // qui la corsa si esaurisce da sola
+    var animId = null;
+
+    function stopGlide() {
+        if (animId) window.cancelAnimationFrame(animId);
+        animId = null;
+    }
+
+    function glideTo(left) {
+        var from  = track.scrollLeft;
+        var delta = left - from;
+        var start = null;
+
+        stopGlide();
+        if (!delta) return;
+
+        animId = window.requestAnimationFrame(function frame(now) {
+            if (start === null) start = now;
+
+            var t = Math.min(1, (now - start) / 480);
+            track.scrollLeft = from + delta * (1 - Math.pow(1 - t, 3));
+
+            animId = t < 1 ? window.requestAnimationFrame(frame) : null;
+        });
+    }
+
+    // a fine corsa: il rientro dal clone e' un salto secco (deve restare
+    // invisibile), l'assestamento sulla slide piu' vicina e' animato
+    function onTrackSettled() {
+        var list  = items();
+        var width = track.clientWidth;
+
+        if (list.length < 2 || !width || dragging || animId) return;
+
+        var pos = Math.round(track.scrollLeft / width);
+
+        if (pos === 0) {
+            pos = list.length;
+            track.scrollLeft = pos * width;
+        } else if (pos === list.length + 1) {
+            pos = 1;
+            track.scrollLeft = width;
+        } else if (Math.abs(track.scrollLeft - pos * width) > 2) {
+            glideTo(pos * width);
+        }
+
+        currentIndex = pos - 1;
+        setCounter();
+    }
+
+    track.addEventListener('scroll', function () {
+        window.clearTimeout(scrollTimer);
+        scrollTimer = window.setTimeout(onTrackSettled, 140);
+    });
+
+    // il touch scorre gia' da solo, con l'inerzia del browser: qui servono
+    // mouse e penna, che su un contenitore scrollabile non trascinano niente
+    var dragging   = false;
+    var dragStartX = 0;
+    var dragStartL = 0;
+
+    track.addEventListener('pointerdown', function (e) {
+        // un tocco nuovo interrompe la discesa in corso, dito o mouse che sia
+        stopGlide();
+
+        if (e.pointerType === 'touch' || !mqMobile.matches) return;
+
+        dragging   = true;
+        dragStartX = e.clientX;
+        dragStartL = track.scrollLeft;
+        track.classList.add('is-dragging');
+        track.setPointerCapture(e.pointerId);
+    });
+
+    track.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+
+        track.scrollLeft = dragStartL - (e.clientX - dragStartX);
+    });
+
+    function endDrag() {
+        if (!dragging) return;
+
+        dragging = false;
+        track.classList.remove('is-dragging');
+        onTrackSettled();
+    }
+
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
+
+    // --- comune ---
+
+    function render() {
+        if (mqMobile.matches) {
+            buildTrack();
+            positionTrack();
+        } else {
+            renderFade();
+        }
+
+        setCounter();
+
+        var loopable = items().length > 1;
         prevBtn.hidden = !loopable;
         nextBtn.hidden = !loopable;
+    }
 
-        preload((currentIndex + 1) % items.length);
-        preload((currentIndex - 1 + items.length) % items.length);
+    function step(delta) {
+        var list = items();
+
+        if (mqMobile.matches) {
+            glideTo(track.scrollLeft + delta * track.clientWidth);
+            return;
+        }
+
+        currentIndex = (currentIndex + delta + list.length) % list.length;
+        renderFade();
+        setCounter();
     }
 
     function open(group, index) {
@@ -224,14 +389,15 @@
         document.body.classList.remove('lightbox-open');
     }
 
-    function step(delta) {
-        var items = groups[currentGroup];
-        currentIndex = (currentIndex + delta + items.length) % items.length;
-        render();
-    }
-
     root.querySelectorAll('[data-lightbox-close]').forEach(function (el) {
         el.addEventListener('click', close);
+    });
+
+    // il container copre tutta la viewport, quindi il backdrop non riceve piu'
+    // click: chiudo quando il click cade nel vuoto attorno alla foto
+    container.addEventListener('click', function (e) {
+        if (e.target.closest('.lightbox__header, .lightbox__nav, .lightbox__content')) return;
+        close();
     });
 
     prevBtn.addEventListener('click', function () { step(-1); });
@@ -243,6 +409,12 @@
         if (e.key === 'Escape')     close();
         if (e.key === 'ArrowLeft')  step(-1);
         if (e.key === 'ArrowRight') step(1);
+    });
+
+    // rotazione o finestra ridimensionata oltre la soglia: si riparte nell'altro
+    // modo dalla foto in cui si era
+    mqMobile.addEventListener('change', function () {
+        if (root.classList.contains('is-open')) render();
     });
 })();
 

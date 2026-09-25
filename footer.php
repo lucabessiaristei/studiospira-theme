@@ -5,7 +5,7 @@
         <div class="footer-cta bg-accent">
             <div class="container px-4 py-a d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between gap-4 text-center text-lg-start">
                 <h3 class="mb-0"><?php pll_e('Hai un edificio storico da restaurare?'); ?></h3>
-                <a href="<?php echo esc_url(home_url('/contatti')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Parlaci del tuo edificio'); ?></span></a>
+                <a href="<?php echo esc_url(sp_page_url('contatti')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Parlaci del tuo edificio'); ?></span></a>
             </div>
         </div>
 

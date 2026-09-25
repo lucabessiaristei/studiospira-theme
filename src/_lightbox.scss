@@ -1,5 +1,7 @@
 .lightbox {
     --lb-offset: 4rem;
+    // stacco tra frecce e slide: stesso passo del .gap-5 di bootstrap
+    --lb-gap: 3rem;
 
     @media (min-width: 768px)  { --lb-offset: 5rem; }
     @media (min-width: 992px)  { --lb-offset: 6rem; }
@@ -23,7 +25,7 @@
         opacity: 0.92;
     }
 
-    &__body {
+    &__container {
         position: relative;
         z-index: 1;
         height: 100%;
@@ -51,21 +53,30 @@
 
     &__counter {
         margin: 0;
-        letter-spacing: 0.04em;
+    }
+
+    // riga [prev | foto | next]: i bottoni sono flex item, non piu' sovrapposti,
+    // cosi' la foto non puo' finire sotto di loro a nessuna proporzione
+    &__body {
+        position: relative;
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: flex;
+        gap: var(--lb-gap);
     }
 
     &__content {
         position: relative;
         flex: 1 1 auto;
-        min-height: 0;
-        width: 100%;
+        // senza min-width lo spazio richiesto dalla foto non si comprime e
+        // sono i bottoni a cedere
+        min-width: 0;
     }
 
     &__nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 2;
+        flex: none;
+        align-self: center;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -75,8 +86,11 @@
         background: transparent;
         cursor: pointer;
 
-        &--prev { left: var(--lb-offset); }
-        &--next { right: var(--lb-offset); }
+        // display:flex batte l'[hidden] dello UA stylesheet: senza questa riga
+        // i bottoni resterebbero visibili anche con una foto sola
+        &[hidden] {
+            display: none;
+        }
     }
 
     &__chevron {
@@ -88,6 +102,7 @@
         &--prev { transform: scaleX(-1); }
     }
 
+    // crossfade: le due immagini si alternano sovrapposte
     &__img {
         position: absolute;
         inset: 0;
@@ -100,6 +115,72 @@
 
         &.is-active {
             opacity: 1;
+        }
+    }
+
+    &__track {
+        display: none;
+    }
+
+    // sotto md: niente frecce e niente crossfade, si trascina lo scroller
+    @media (max-width: 767.98px) {
+        &__container {
+            gap: 3rem;
+            // la riga delle slide arriva ai bordi dello schermo: il rientro
+            // laterale resta solo al contatore e al pulsante chiudi
+            padding-inline: 0;
+            padding-bottom: 3rem;
+        }
+
+        &__header {
+            // l'header rientra dal bordo, la foto no
+            padding-inline: 1.5rem;
+        }
+
+        // il pulsante e' assoluto e il suo right: 0 guarda il padding box
+        // dell'header, quindi il rientro va ripetuto qui
+        &__close {
+            right: 1.5rem;
+        }
+
+        &__nav,
+        &__img {
+            display: none;
+        }
+
+        &__track {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            // nessuno snap del browser: si fermerebbe di scatto. A fine corsa
+            // ci pensa lo script, con una discesa in ease-out
+            scrollbar-width: none;
+            cursor: grab;
+            user-select: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            &.is-dragging {
+                cursor: grabbing;
+            }
+        }
+
+        &__slide {
+            flex: 0 0 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                display: block;
+                max-width: 100%;
+                max-height: 100%;
+                -webkit-user-drag: none;
+            }
         }
     }
 }

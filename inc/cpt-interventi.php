@@ -59,12 +59,32 @@ add_filter('pll_get_post_types', function($post_types) {
     return $post_types;
 });
 
-// same for the taxonomy — gives each term a language + a native "add
-// translation" UI on the term screen, instead of one term shared across languages
+// destinazione_uso is deliberately NOT translatable: each term is shared by both
+// languages, with the English name in the "nome_en" term field (see
+// i18n-fields.php). Unset rather than just not added, so a stale tick in
+// Polylang's settings can't turn it back on.
 add_filter('pll_get_taxonomies', function($taxonomies) {
-    $taxonomies['destinazione_uso'] = 'destinazione_uso';
+    unset($taxonomies['destinazione_uso']);
     return $taxonomies;
-});
+}, 99);
+
+// project metadata (dates, budget, team, relationships) — not language-dependent, always copied identically
+add_filter('pll_copy_post_metas', function($metas, $sync) {
+    $interventi_metas = [
+        'copertina',
+        'anno_inizio',
+        'anno_fine',
+        'posizione',
+        'committenza',
+        'team',
+        'budget',
+        'categoria',
+        'servizi',
+        'articoli',
+        'galleria',
+    ];
+    return array_merge($metas, $interventi_metas);
+}, 10, 2);
 
 // destinazione_uso terms are internal-only tags — no need for slug/description
 add_action('admin_head-edit-tags.php', 'sp_hide_destinazione_uso_term_fields');

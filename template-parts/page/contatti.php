@@ -1,7 +1,17 @@
 <div class="row g-5 g-lg-0">
 
     <div class="contatti__main col-12 col-lg-7">
-        <form class="contatti__form" method="post" action="">
+
+        <?php if (isset($_GET['contatti']) && $_GET['contatti'] === 'success') : ?>
+            <p class="contatti__form-message contatti__form-message--success"><?php pll_e("Messaggio inviato, grazie! Ti risponderemo il prima possibile."); ?></p>
+        <?php elseif (isset($_GET['contatti']) && $_GET['contatti'] === 'error') : ?>
+            <p class="contatti__form-message contatti__form-message--error"><?php pll_e("Non è stato possibile inviare il messaggio. Controlla i campi obbligatori e riprova."); ?></p>
+        <?php endif; ?>
+
+        <form class="contatti__form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <input type="hidden" name="action" value="sp_contatti_submit">
+            <input type="hidden" name="sp_contatti_lang" value="<?php echo esc_attr(pll_current_language()); ?>">
+            <?php wp_nonce_field('sp_contatti_submit', 'sp_contatti_nonce'); ?>
             <div class="row g-4">
 
                 <div class="col-12 col-md-6">
@@ -40,9 +50,7 @@
                 </div>
 
                 <div class="col-12">
-                    <!-- requires a real Google reCAPTCHA site key + the script enqueued,
-                         and server-side verification of the response on submit -->
-                    <div class="g-recaptcha" data-sitekey=""></div>
+                    <div class="cf-turnstile" data-sitekey="<?php echo esc_attr(get_option('sp_turnstile_site_key')); ?>"></div>
                 </div>
 
                 <div class="col-12 dark">

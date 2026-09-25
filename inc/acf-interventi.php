@@ -137,6 +137,26 @@ add_action('acf/init', function() {
         'style'          => 'default',
         'label_placement'=> 'top',
     ]);
+
+    // English name of the destinazione d'uso, shown under the Italian one on
+    // the term add/edit screens — see sp_term_name()
+    acf_add_local_field_group([
+        'key'    => 'group_destinazione_uso',
+        'title'  => 'Traduzione',
+        'fields' => [
+            [
+                'key'          => 'field_destinazione_uso_nome_en',
+                'name'         => 'nome_en',
+                'label'        => 'Nome (EN)',
+                'type'         => 'text',
+                'required'     => 0,
+                'instructions' => "Se vuoto, sul sito inglese viene mostrato il nome italiano.",
+            ],
+        ],
+        'location' => [[
+            ['param' => 'taxonomy', 'operator' => '==', 'value' => 'destinazione_uso'],
+        ]],
+    ]);
 });
 
 

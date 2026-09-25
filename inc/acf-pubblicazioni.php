@@ -11,11 +11,28 @@ add_action('acf/init', function() {
         'fields' => [
 
             [
+                'key'          => 'field_pubblicazioni_titolo_en',
+                'name'         => 'titolo_en',
+                'label'        => 'Titolo (EN)',
+                'type'         => 'text',
+                'required'     => 0,
+                'instructions' => "I campi (EN) sono opzionali: se vuoti, sul sito inglese viene mostrato il testo italiano.",
+            ],
+            [
                 'key'      => 'field_pubblicazioni_sottotitolo',
                 'name'     => 'sottotitolo',
                 'label'    => 'Sottotitolo',
                 'type'     => 'text',
                 'required' => 0,
+                'wrapper'  => ['width' => 50],
+            ],
+            [
+                'key'      => 'field_pubblicazioni_sottotitolo_en',
+                'name'     => 'sottotitolo_en',
+                'label'    => 'Sottotitolo (EN)',
+                'type'     => 'text',
+                'required' => 0,
+                'wrapper'  => ['width' => 50],
             ],
             [
                 'key'           => 'field_pubblicazioni_copertina',
@@ -75,6 +92,16 @@ add_action('acf/init', function() {
                 'required'     => 0,
                 'rows'         => 4,
                 'instructions' => 'Note estese: saggio, pagine del contributo, autore specifico.',
+                'wrapper'      => ['width' => 50],
+            ],
+            [
+                'key'          => 'field_pubblicazioni_info_en',
+                'name'         => 'info_en',
+                'label'        => 'Info (EN)',
+                'type'         => 'textarea',
+                'required'     => 0,
+                'rows'         => 4,
+                'wrapper'      => ['width' => 50],
             ],
             [
                 'key'           => 'field_pubblicazioni_tipo_url',

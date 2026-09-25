@@ -18,6 +18,9 @@ add_action('admin_init', function() {
     register_setting('sp_footer', 'sp_contatti_indirizzo',      ['sanitize_callback' => 'sanitize_text_field']);
     register_setting('sp_footer', 'sp_contatti_email',          ['sanitize_callback' => 'sanitize_email']);
     register_setting('sp_footer', 'sp_contatti_telefono',       ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('sp_footer', 'sp_contatti_form_recipient', ['sanitize_callback' => 'sanitize_email']);
+    register_setting('sp_footer', 'sp_turnstile_site_key',      ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('sp_footer', 'sp_turnstile_secret_key',    ['sanitize_callback' => 'sanitize_text_field']);
     register_setting('sp_footer', 'sp_footer_registro_imprese', ['sanitize_callback' => 'sanitize_text_field']);
     register_setting('sp_footer', 'sp_footer_capitale_sociale', ['sanitize_callback' => 'sanitize_text_field']);
     register_setting('sp_footer', 'sp_footer_piva',             ['sanitize_callback' => 'sanitize_text_field']);
@@ -64,6 +67,50 @@ add_action('admin_init', function() {
         },
         'footer-settings',
         'sp_footer_contatti'
+    );
+
+    add_settings_field(
+        'sp_contatti_form_recipient',
+        'Email destinatario modulo',
+        function() {
+            printf(
+                '<input type="email" name="sp_contatti_form_recipient" value="%s" class="regular-text">
+                 <p class="description">Indirizzo a cui arrivano i messaggi inviati dal form della pagina Contatti.</p>',
+                esc_attr(get_option('sp_contatti_form_recipient'))
+            );
+        },
+        'footer-settings',
+        'sp_footer_contatti'
+    );
+
+    add_settings_section('sp_footer_turnstile', 'Cloudflare Turnstile', '__return_false', 'footer-settings');
+
+    add_settings_field(
+        'sp_turnstile_site_key',
+        'Site Key',
+        function() {
+            printf(
+                '<input type="text" name="sp_turnstile_site_key" value="%s" class="regular-text">
+                 <p class="description">Chiave pubblica del widget anti-spam, mostrata nel form dei contatti.</p>',
+                esc_attr(get_option('sp_turnstile_site_key'))
+            );
+        },
+        'footer-settings',
+        'sp_footer_turnstile'
+    );
+
+    add_settings_field(
+        'sp_turnstile_secret_key',
+        'Secret Key',
+        function() {
+            printf(
+                '<input type="text" name="sp_turnstile_secret_key" value="%s" class="regular-text">
+                 <p class="description">Chiave segreta, usata per la verifica lato server. Non condividerla.</p>',
+                esc_attr(get_option('sp_turnstile_secret_key'))
+            );
+        },
+        'footer-settings',
+        'sp_footer_turnstile'
     );
 
     add_settings_section('sp_footer_societa', 'Dati societari', '__return_false', 'footer-settings');

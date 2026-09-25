@@ -11,6 +11,14 @@ add_action('acf/init', function() {
         'fields' => [
 
             [
+                'key'          => 'field_articoli_titolo_en',
+                'name'         => 'titolo_en',
+                'label'        => 'Titolo (EN)',
+                'type'         => 'text',
+                'required'     => 0,
+                'instructions' => "Se vuoto, sul sito inglese viene mostrato il titolo italiano.",
+            ],
+            [
                 'key'      => 'field_articoli_url',
                 'name'     => 'url',
                 'label'    => 'URL',

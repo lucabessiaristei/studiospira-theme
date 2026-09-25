@@ -2,6 +2,33 @@
 
 if (!defined('ABSPATH')) exit;
 
+// the front page's real copy lives in the "Hero home" ACF fields below —
+// the native content editor is never rendered (front-page.php doesn't call
+// the_content()), so hide it here to stop stray text ending up in there.
+// WordPress renders the main editor for pages inline (edit_form_advanced),
+// not through the do_meta_boxes()/postbox system, so remove_meta_box() can't
+// touch it — a scoped CSS hide on the post-edit screen is the only lever.
+add_action('admin_head-post.php', function() {
+    $post_id = isset($_GET['post']) ? (int) $_GET['post'] : 0;
+    if (!$post_id || get_post_type($post_id) !== 'page') return;
+
+    $front_id = (int) get_option('page_on_front');
+    $is_front = ($post_id === $front_id);
+
+    if (!$is_front && function_exists('pll_get_post') && function_exists('pll_languages_list')) {
+        foreach (pll_languages_list() as $lang) {
+            if ((int) pll_get_post($post_id, $lang) === $front_id) {
+                $is_front = true;
+                break;
+            }
+        }
+    }
+
+    if ($is_front) {
+        echo '<style>#postdivrich { display: none; }</style>';
+    }
+});
+
 add_action('acf/init', function() {
     if (!function_exists('acf_add_local_field_group')) return;
 

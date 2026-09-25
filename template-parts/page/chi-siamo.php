@@ -55,7 +55,11 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 
         <?php if ($certificazione) : ?>
             <div class="chi-siamo__certificazione w-100 mt-5 mt-lg-0">
-                <img class="chi-siamo__certificazione-img mb-4" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/certif.jpg'); ?>" alt="">
+                <div class="chi-siamo__certificazione-loghi d-flex flex-wrap mb-4 align-items-center justify-content-start">
+                    <img class="chi-siamo__certificazione-img" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/certificazioni/iso_9001.svg'); ?>" alt="">
+                    <img class="chi-siamo__certificazione-img" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/certificazioni/uni_pdr_125.svg'); ?>" alt="">
+                    <img class="chi-siamo__certificazione-img" src="<?php echo esc_url(get_stylesheet_directory_uri() . '/assets/certificazioni/accredia.svg'); ?>" alt="">
+                </div>
                 <p class="chi-siamo__certificazione-testo fs-body-small text-textlight mb-0"><?php echo nl2br(esc_html($certificazione)); ?></p>
             </div>
         <?php endif; ?>
@@ -73,7 +77,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                         $a_dl  = (get_field('tipo_url', $aid) === 'download');
                     ?>
                         <div class="intervento__articolo py-3 d-flex justify-content-between align-items-center gap-3 border-bottom">
-                            <span><?php echo esc_html(get_the_title($aid)); ?></span>
+                            <span><?php echo esc_html(sp_title_i18n($aid)); ?></span>
                             <a href="<?php echo esc_url($a_url); ?>" class="sp-btn ghost no-underline"
                                <?php echo $a_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
                                 <?php pll_e('Leggi articolo'); ?>
@@ -89,7 +93,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                 <h3 class="section-label pb-3 d-flex align-items-center"><?php pll_e('Pubblicazioni'); ?></h3>
                 <div class="chi-siamo__pubblicazioni pt-5 pt-lg-a d-flex flex-column gap-5 gap-md-b border-top">
                     <?php foreach ($pubblicazioni as $pid) :
-                        $p_sottotitolo = get_field('sottotitolo', $pid);
+                        $p_sottotitolo = sp_field_i18n('sottotitolo', $pid);
                         $p_copertina   = get_field('copertina', $pid);
                         $p_a_cura_di   = get_field('a_cura_di', $pid);
                         $p_editore     = get_field('editore', $pid);
@@ -99,16 +103,27 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                         $p_url         = get_field('url', $pid);
                         $p_dl          = (get_field('tipo_url', $pid) === 'download');
                     ?>
-                        <div class="chi-siamo__pubblicazione d-flex gap-4">
+                        <?php $p_link_attrs = $p_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>
+                        <div class="chi-siamo__pubblicazione d-md-flex gap-4">
 
                             <div class="chi-siamo__pubblicazione-info">
-                                <h4 class="mb-3"><?php echo esc_html(get_the_title($pid)); ?></h4>
 
-                                <?php if ($p_sottotitolo) : ?>
-                                    <p class="mb-5 text-textlight"><?php echo esc_html($p_sottotitolo); ?></p>
-                                <?php endif; ?>
+                                <div class="chi-siamo__pubblicazione-testa">
+                                    <h4 class="mb-3">
+                                        <?php if ($p_url) : ?>
+                                            <a href="<?php echo esc_url($p_url); ?>" class="chi-siamo__pubblicazione-title-link"
+                                               <?php echo $p_link_attrs; ?>><?php echo esc_html(sp_title_i18n($pid)); ?></a>
+                                        <?php else : ?>
+                                            <?php echo esc_html(sp_title_i18n($pid)); ?>
+                                        <?php endif; ?>
+                                    </h4>
 
-                                <div class="chi-siamo__pubblicazione-dati mt-3 d-flex flex-column gap-2">
+                                    <?php if ($p_sottotitolo) : ?>
+                                        <p class="mb-3 mb-md-5 text-textlight"><?php echo esc_html($p_sottotitolo); ?></p>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="chi-siamo__pubblicazione-dati mt-md-3 d-flex flex-column gap-2">
                                     <?php if ($p_a_cura_di) : ?>
                                         <div class="intervento__dato d-grid align-items-baseline gap-3">
                                             <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('A cura di'); ?></span>
@@ -144,19 +159,27 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                                         </div>
                                     <?php endif; ?>
                                 </div>
+
                             </div>
 
-                            <div class="chi-siamo__pubblicazione-cover position-relative">
+                            <div class="chi-siamo__pubblicazione-cover position-md-relative">
                                 <?php if ($p_copertina) : ?>
-                                    <img src="<?php echo esc_url($p_copertina['sizes']['medium']); ?>"
-                                         alt="<?php echo esc_attr($p_copertina['alt']); ?>"
-                                         class="chi-siamo__pubblicazione-cover-img">
+                                    <?php if ($p_url) : ?>
+                                        <a href="<?php echo esc_url($p_url); ?>" class="chi-siamo__pubblicazione-cover-link"
+                                           <?php echo $p_link_attrs; ?>>
+                                    <?php endif; ?>
+                                            <img src="<?php echo esc_url($p_copertina['sizes']['medium']); ?>"
+                                                 alt="<?php echo esc_attr($p_copertina['alt']); ?>"
+                                                 class="chi-siamo__pubblicazione-cover-img">
+                                    <?php if ($p_url) : ?>
+                                        </a>
+                                    <?php endif; ?>
                                 <?php endif; ?>
 
                                 <?php if ($p_url) : ?>
-                                    <div class="dark position-absolute bottom-0 w-100">
+                                    <div class="chi-siamo__pubblicazione-cta dark position-md-absolute bottom-0 w-100">
                                         <a href="<?php echo esc_url($p_url); ?>" class="sp-btn w-100 justify-content-center"
-                                           <?php echo $p_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
+                                           <?php echo $p_link_attrs; ?>>
                                             <span class="sp-btn__label"><?php echo esc_html($p_dl ? pll__('Scarica') : pll__('Compra')); ?></span>
                                         </a>
                                     </div>

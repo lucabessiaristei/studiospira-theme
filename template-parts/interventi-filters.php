@@ -3,8 +3,12 @@ $interventi_filter_destinazione_terms = get_terms(['taxonomy' => 'destinazione_u
 if (is_wp_error($interventi_filter_destinazione_terms)) $interventi_filter_destinazione_terms = [];
 
 $interventi_filter_destinazione_options = array_map(function($term) {
-    return ['value' => $term->term_id, 'label' => $term->name];
+    return ['value' => $term->term_id, 'label' => sp_term_name($term)];
 }, $interventi_filter_destinazione_terms);
+// get_terms sorts by the Italian name — re-sort on the label actually shown
+usort($interventi_filter_destinazione_options, function($a, $b) {
+    return strcasecmp($a['label'], $b['label']);
+});
 
 $interventi_filter_posizione_options = array_map(function($posizione) {
     return ['value' => sanitize_title($posizione), 'label' => $posizione];

@@ -10,8 +10,21 @@ add_filter('acf/location/rule_types', function($choices) {
 add_filter('acf/location/rule_match/post_slug', function($match, $rule, $options) {
     if (empty($options['post_id'])) return false;
 
-    $slug = get_post_field('post_name', $options['post_id']);
-    $match = ($slug === $rule['value']);
+    $post_id = $options['post_id'];
+    $slug    = get_post_field('post_name', $post_id);
+    $match   = ($slug === $rule['value']);
+
+    // a Polylang translation gets its own slug (e.g. "about-us" for "chi-siamo"),
+    // so also match if any of its sibling translations has the target slug
+    if (!$match && function_exists('pll_get_post') && function_exists('pll_languages_list')) {
+        foreach (pll_languages_list() as $lang) {
+            $translated_id = pll_get_post($post_id, $lang);
+            if ($translated_id && get_post_field('post_name', $translated_id) === $rule['value']) {
+                $match = true;
+                break;
+            }
+        }
+    }
 
     if ($rule['operator'] === '!=') $match = !$match;
 

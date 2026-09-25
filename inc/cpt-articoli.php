@@ -27,3 +27,10 @@ add_action('admin_menu', function() {
 add_action('admin_bar_menu', function($bar) {
     $bar->remove_node('new-post');
 }, 999);
+
+// deliberately NOT translatable: one articolo serves both languages, with the
+// English title in "titolo_en" (see i18n-fields.php)
+add_filter('pll_get_post_types', function($post_types) {
+    unset($post_types['articoli']);
+    return $post_types;
+}, 99);

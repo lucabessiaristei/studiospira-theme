@@ -21,7 +21,7 @@ $testo_2             = get_field('testo_2');
 
             <h1 class="front-page__headline display mb-5 mb-md-c"><?php echo esc_html($headline ?: get_the_title()); ?></h1>
 
-            <a href="<?php echo esc_url(home_url('/contatti')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Parlaci del tuo edificio'); ?></span></a>
+            <a href="<?php echo esc_url(sp_page_url('contatti')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Parlaci del tuo edificio'); ?></span></a>
 
         </div>
     </section>
@@ -57,7 +57,7 @@ $testo_2             = get_field('testo_2');
 
                     <div class="pt-4 pt-md-5 pt-lg-a pt-xxl-b pb-md-4 border-top">
 
-                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d align-items-end">
                             <?php foreach ([...$interventi_evidenza, ...$interventi_evidenza, ...$interventi_evidenza] as $intervento) : // TEMP: x3 per test layout ?>
                                 <div class="col">
                                     <?php get_template_part('template-parts/intervento-card', null, ['intervento' => $intervento]); ?>
@@ -65,7 +65,7 @@ $testo_2             = get_field('testo_2');
                             <?php endforeach; ?>
                         </div>
 
-                        <div class="front-page__interventi-cta dark mt-5 mt-lg-b text-md-center">
+                        <div class="front-page__interventi-cta dark mt-4 mt-md-5 mt-lg-b text-md-center">
                             <a href="<?php echo esc_url(get_post_type_archive_link('interventi')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Tutti gli interventi'); ?></span></a>
                         </div>
 
@@ -83,7 +83,7 @@ $testo_2             = get_field('testo_2');
             <div class="container px-4 px-lg-c">
                 <div class="front-page__testo-content"><?php echo $testo_2; ?></div>
                 <p class="front-page__testo-cta dark mt-5 mt-lg-b">
-                    <a href="<?php echo esc_url(home_url('/chi-siamo')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Scopri chi siamo'); ?></span></a>
+                    <a href="<?php echo esc_url(sp_page_url('chi-siamo')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Scopri chi siamo'); ?></span></a>
                 </p>
             </div>
         </section>
