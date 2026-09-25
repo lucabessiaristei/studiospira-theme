@@ -19,13 +19,16 @@ add_action('init', function() {
     ]);
 });
 
-// nasconde i post nativi WP dall'admin (non deregistrabili)
+// nasconde i post nativi WP e i commenti dall'admin (non deregistrabili) —
+// il sito non usa né l'uno né l'altro
 add_action('admin_menu', function() {
     remove_menu_page('edit.php');
+    remove_menu_page('edit-comments.php');
 });
 
 add_action('admin_bar_menu', function($bar) {
     $bar->remove_node('new-post');
+    $bar->remove_node('comments');
 }, 999);
 
 // deliberately NOT translatable: one articolo serves both languages, with the

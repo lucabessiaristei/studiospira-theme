@@ -14,7 +14,6 @@ add_action('init', function() {
 add_action('admin_menu', function() {
     if (!current_user_can('sp_content_editor')) return;
 
-    remove_menu_page('edit.php');           // Articoli (blog)
-    remove_menu_page('edit-comments.php');  // Commenti
+    // Articoli (blog) and Commenti are hidden for everyone, see cpt-articoli.php
     remove_menu_page('tools.php');          // Strumenti
 }, 999);

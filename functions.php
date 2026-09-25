@@ -8,6 +8,7 @@ require_once get_stylesheet_directory() . '/inc/cpt-articoli.php';
 require_once get_stylesheet_directory() . '/inc/acf-articoli.php';
 require_once get_stylesheet_directory() . '/inc/acf-pages.php';
 require_once get_stylesheet_directory() . '/inc/acf-home.php';
+require_once get_stylesheet_directory() . '/inc/interventi-evidenza.php';
 require_once get_stylesheet_directory() . '/inc/acf-chi-siamo.php';
 require_once get_stylesheet_directory() . '/inc/footer-settings.php';
 require_once get_stylesheet_directory() . '/inc/contact-form.php';

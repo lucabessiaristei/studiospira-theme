@@ -71,18 +71,6 @@ add_action('acf/init', function() {
                 'media_upload' => 0,
             ],
             [
-                'key'              => 'field_home_interventi_evidenza',
-                'name'             => 'interventi_evidenza',
-                'label'            => 'Interventi in evidenza',
-                'type'             => 'relationship',
-                'required'         => 0,
-                'post_type'        => ['interventi'],
-                'filters'          => ['search'],
-                'max'              => 6,
-                'return_format'    => 'object',
-                'instructions'     => 'Max 6, mostrati nella griglia della home.',
-            ],
-            [
                 'key'      => 'field_home_testo_2',
                 'name'     => 'testo_2',
                 'label'    => 'Testo 2',

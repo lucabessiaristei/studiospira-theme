@@ -6,7 +6,7 @@ $subheadline         = get_field('subheadline');
 $headline            = get_field('headline');
 $banner_photo        = get_field('banner_photo');
 $testo_1             = get_field('testo_1');
-$interventi_evidenza = get_field('interventi_evidenza');
+$interventi_evidenza = sp_get_interventi_evidenza(); // picked from its own admin page, see inc/interventi-evidenza.php
 $testo_2             = get_field('testo_2');
 ?>
 
