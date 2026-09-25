@@ -98,8 +98,7 @@ function sp_render_interventi_evidenza_page() {
     ?>
     <div class="wrap">
         <h1>Interventi in evidenza</h1>
-        <p>Scegli fino a <?php echo SP_EVIDENZA_MAX; ?> interventi da mostrare nella griglia della home, e trascinali per cambiarne l'ordine.
-           Vale per tutte le lingue: sul sito inglese compare automaticamente la traduzione di ciascuno.</p>
+        <p>Scegli fino a <?php echo SP_EVIDENZA_MAX; ?> interventi da mostrare nella griglia della home, e trascinali per cambiarne l'ordine.</p>
 
         <form method="post" action="options.php">
             <?php settings_fields('sp_evidenza'); ?>
