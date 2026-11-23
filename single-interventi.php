@@ -10,14 +10,12 @@ $committenza  = get_field('committenza');
 $team         = get_field('team');
 $budget       = get_field('budget');
 $categoria    = get_field('categoria');
-$servizi      = get_field('servizi');   // relationship, array of IDs
+$servizi      = sp_sort_servizi(get_field('servizi')); // services only, in page order
 $articoli     = get_field('articoli');  // relationship, array of IDs
 
-$destinazioni = wp_get_post_terms(get_the_ID(), 'destinazione_uso');
-$destinazioni = is_wp_error($destinazioni) ? [] : array_map('sp_term_name', $destinazioni);
-
-$galleria = get_post_meta(get_the_ID(), 'galleria', true);
-if (!is_array($galleria)) $galleria = [];
+// language-independent data comes from the Italian original, see i18n-fields.php
+$destinazioni = array_map('sp_term_name', sp_intervento_terms('destinazione_uso'));
+$galleria     = sp_intervento_galleria();
 ?>
 
 <main id="primary" class="site-main intervento">
@@ -28,9 +26,7 @@ if (!is_array($galleria)) $galleria = [];
         </div>
         <?php if ($copertina) : ?>
             <div class="hero-photo container px-4">
-                <img src="<?php echo esc_url($copertina['sizes']['large']); ?>"
-                     alt="<?php echo esc_attr($copertina['alt']); ?>"
-                     class="banner_photo">
+                <?php echo sp_banner_image($copertina); ?>
             </div>
         <?php endif; ?>
     </section>
@@ -65,7 +61,7 @@ if (!is_array($galleria)) $galleria = [];
 
                 </div>
 
-                <aside class="intervento__dati col-12 col-lg-4 offset-lg-1 d-flex flex-column">
+                <aside class="intervento__dati sp-sticky col-12 col-lg-4 offset-lg-1 d-flex flex-column">
 
                     <?php if ($anno_inizio) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
@@ -105,7 +101,10 @@ if (!is_array($galleria)) $galleria = [];
                     <?php if ($servizi) : ?>
                         <div class="intervento__dato d-grid align-items-baseline gap-3">
                             <span class="secondary-font fs-mono-body text-textlight"><?php pll_e('Servizi'); ?></span>
-                            <span><?php echo esc_html(implode(', ', array_map('get_the_title', $servizi))); ?></span>
+                            <span>
+                                <?php echo esc_html(implode(', ', array_map(function($s) { return sp_title_i18n($s->ID); }, $servizi))); ?>
+                                <span class="d-block mt-3"><a href="<?php echo esc_url(sp_page_url('servizi')); ?>" class="sp-btn ghost"><?php pll_e('Tutti i servizi'); ?></a></span>
+                            </span>
                         </div>
                     <?php endif; ?>
 
@@ -148,7 +147,7 @@ if (!is_array($galleria)) $galleria = [];
                                 <a href="<?php echo esc_url(wp_get_attachment_image_url($img_id, 'large')); ?>"
                                    data-lightbox="galleria-<?php the_ID(); ?>">
                                     <span class="intervento__galleria-img hover-border-img">
-                                        <?php echo wp_get_attachment_image($img_id, 'medium'); ?>
+                                        <?php echo sp_image($img_id, 'large', '(min-width: 1400px) 380px, (min-width: 992px) 30vw, 45vw'); ?>
                                     </span>
                                 </a>
                             </div>
@@ -185,9 +184,7 @@ if (!is_array($galleria)) $galleria = [];
                     <h3 class="section-label pb-3"><?php pll_e('Prossimo intervento'); ?></h3>
                     <div class="intervento__prossimo-card pt-4 d-flex flex-column flex-lg-row align-items-lg-center border-top">
                         <?php if ($next_cop) : ?>
-                            <?php echo wp_get_attachment_image($next_cop['ID'], 'medium_large', false, [
-                                'alt'   => $next_cop['alt'],
-                            ]); ?>
+                            <?php echo sp_image($next_cop, 'medium_large', '267px'); // 150px tall at 16:9 ?>
                         <?php endif; ?>
                         <h3 class="pt-3 pb-4 py-lg-0 text-bg"><?php echo esc_html(get_the_title($next_id)); ?></h3>
                         <p class="dark ms-lg-auto">

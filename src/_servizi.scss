@@ -1,0 +1,173 @@
+// phase number badge size — the description indent is derived from it
+$servizi-num-size: 2.2rem;
+
+.servizi {
+
+    // visual index: phase links stacked and centered, joined by vertical lines
+    &__indice {
+        &-line {
+            // 1px vertical rule — no bootstrap equivalent; height from h-a
+            width: 1px;
+            background: $color-text;
+
+            // draw-in, driven by main.js (is-growing added there, never in markup)
+            &.is-growing {
+                transform: scaleY(0);
+                transform-origin: top;
+                transition: transform 0.4s ease-out;
+
+                &.is-revealed {
+                    transform: none;
+                }
+            }
+        }
+
+        // no global link underline here: only the title (not the number) gets
+        // the buttons' underline, drawn in from the left on hover (sp-underline,
+        // see _buttons.scss)
+        &-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        &-title {
+            position: relative;
+            display: inline-block;
+
+            &::before { @include sp-underline(-0.15rem, 0, 0); }
+        }
+
+        &-link:active &-title::before {
+            transform: scaleX(1);
+        }
+
+        @media (hover: hover) {
+            &-link:hover &-title::before {
+                transform: scaleX(1);
+            }
+        }
+    }
+
+    &__fase {
+        // index anchors land below the fixed header
+        scroll-margin-top: calc(#{$header-height} + 2rem);
+
+        // stacked layout: the badge is centered on the whole title
+        // (align-items-center on the h2). Desktop: this box is exactly one
+        // title line tall (1lh, top-aligned by align-items-lg-start) and puts
+        // the badge at its bottom — the bottom of the title's first line
+        &-num-line {
+            flex: none;
+            display: flex;
+            padding-bottom: 0em;
+
+            @media (min-width: 992px) {
+                padding-bottom: 0.2em;
+                height: 1lh;
+                align-items: flex-end;
+            }
+        }
+
+        // square number badge — fixed size, no utility matches
+        &-num {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: $servizi-num-size;
+            height: $servizi-num-size;
+            line-height: 1;
+
+            // trimmed to the digit's cap height so flex centering is exact
+            &-inner {
+                text-box: trim-both cap alphabetic;
+            }
+        }
+
+        // desktop (phase beside the services), aligned with the title text:
+        // past the badge + gap-3 (1rem). Stacked layout (phone, tablet): no indent
+        &-desc {
+            max-width: 32rem;
+
+            @media (min-width: 992px) {
+                padding-left: $servizi-num-size + 1rem;
+            }
+        }
+    }
+
+    // example interventi: from tablet up, a short row is centered by
+    // .intervento-cards--centered (_front-page.scss)
+    &__esempi {
+        // phones: a horizontal carousel instead of a stacked list — one track
+        // per card, ~80% wide so the next one peeks in, cropped at the page
+        // margin. Mouse drag scrolls it too (main.js)
+        @media (max-width: 767.98px) {
+            grid-template-columns: none;
+            grid-auto-flow: column;
+            grid-auto-columns: 80%;
+            justify-content: start;
+            overflow-x: auto;
+            // overflow-x: auto turns the y axis to auto too, and the cards'
+            // fade-in (translateY) briefly overflows downward — never scroll y
+            overflow-y: hidden;
+            overscroll-behavior-x: contain;
+            scrollbar-width: none;
+            cursor: grab;
+
+            &.is-dragging {
+                cursor: grabbing;
+                user-select: none;
+            }
+
+            &::-webkit-scrollbar { display: none; }
+        }
+    }
+
+    &__servizio {
+        &:first-child {
+            @media (min-width: 992px) {
+                padding-top: 0 !important; // first title lines up with the phase title
+            }
+        }
+
+        &:last-child {
+            border-bottom: 0 !important;
+
+            // no padding under the last service: the row ends at its text, so
+            // the sticky phase intro (bounded by the row) stops level with it
+            @media (min-width: 992px) {
+                padding-bottom: 0 !important;
+            }
+        }
+
+        // Phosphor Light icons at their native 48px, in the brand red
+        &-icona {
+            flex: none;
+            width: 3rem;
+            color: $color-bg;
+
+            // desktop: centered on the service's title + description
+            @media (min-width: 992px) {
+                align-self: center;
+            }
+
+            svg {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        &-testo {
+            min-width: 0;
+        }
+    }
+}
+
+// index links scroll to their phase instead of jumping (native smooth scroll,
+// only on this page; scroll-margin-top on the phase keeps it below the header)
+@media (prefers-reduced-motion: no-preference) {
+    html:has(.servizi__indice) {
+        scroll-behavior: smooth;
+    }
+}

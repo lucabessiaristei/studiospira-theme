@@ -4,7 +4,7 @@
 
 $subheadline         = get_field('subheadline');
 $headline            = get_field('headline');
-$banner_photo        = get_field('banner_photo');
+$banner_photo        = sp_shared_field('banner_photo'); // always the Italian page's, see i18n-fields.php
 $testo_1             = get_field('testo_1');
 $interventi_evidenza = sp_get_interventi_evidenza(); // picked from its own admin page, see inc/interventi-evidenza.php
 $testo_2             = get_field('testo_2');
@@ -29,9 +29,7 @@ $testo_2             = get_field('testo_2');
     <?php if ($banner_photo) : ?>
         <section class="front-page__banner mb-md-4">
             <div class="container px-4">
-                <img src="<?php echo esc_url($banner_photo['sizes']['large']); ?>"
-                     alt="<?php echo esc_attr($banner_photo['alt']); ?>"
-                     class="banner_photo">
+                <?php echo sp_banner_image($banner_photo); ?>
             </div>
         </section>
     <?php endif; ?>
@@ -57,7 +55,7 @@ $testo_2             = get_field('testo_2');
 
                     <div class="pt-4 pt-md-5 pt-lg-a pt-xxl-b pb-md-4 border-top">
 
-                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d intervento-cards">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d intervento-cards intervento-cards--centered">
                             <?php foreach ($interventi_evidenza as $intervento) : ?>
                                 <div class="col">
                                     <?php get_template_part('template-parts/intervento-card', null, ['intervento' => $intervento]); ?>

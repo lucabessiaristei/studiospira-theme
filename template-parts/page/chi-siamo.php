@@ -1,5 +1,5 @@
 <?php
-$banner_photo   = get_field('banner_photo');
+$banner_photo   = sp_shared_field('banner_photo'); // always the Italian page's, see i18n-fields.php
 $fondazione     = get_field('fondazione');
 $interventi     = get_field('interventi');
 $sede           = get_field('sede');
@@ -10,9 +10,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 
 <?php if ($banner_photo) : ?>
     <div class="hero-photo mb-5 mb-lg-a">
-        <img src="<?php echo esc_url($banner_photo['sizes']['large']); ?>"
-             alt="<?php echo esc_attr($banner_photo['alt']); ?>"
-             class="banner_photo">
+        <?php echo sp_banner_image($banner_photo); ?>
     </div>
 <?php endif; ?>
 
@@ -22,6 +20,10 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
 
         <div class="entry-content">
             <?php the_content(); ?>
+        </div>
+
+        <div class="chi-siamo__servizi-cta dark mt-4 mt-md-5 mt-lg-b">
+            <a href="<?php echo esc_url(sp_page_url('servizi')); ?>" class="sp-btn"><span class="sp-btn__label"><?php pll_e('Tutti i servizi'); ?></span></a>
         </div>
 
     </div>
@@ -79,7 +81,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                         <div class="intervento__articolo py-3 d-flex justify-content-between align-items-center gap-3 border-bottom">
                             <span><?php echo esc_html(sp_title_i18n($aid)); ?></span>
                             <a href="<?php echo esc_url($a_url); ?>" class="sp-btn ghost no-underline"
-                               <?php echo $a_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
+                                <?php echo $a_dl ? 'download' : 'target="_blank" rel="noopener"'; ?>>
                                 <?php pll_e('Leggi articolo'); ?>
                             </a>
                         </div>
@@ -112,7 +114,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                                     <h4 class="mb-3">
                                         <?php if ($p_url) : ?>
                                             <a href="<?php echo esc_url($p_url); ?>" class="chi-siamo__pubblicazione-title-link"
-                                               <?php echo $p_link_attrs; ?>><?php echo esc_html(sp_title_i18n($pid)); ?></a>
+                                                <?php echo $p_link_attrs; ?>><?php echo esc_html(sp_title_i18n($pid)); ?></a>
                                         <?php else : ?>
                                             <?php echo esc_html(sp_title_i18n($pid)); ?>
                                         <?php endif; ?>
@@ -166,12 +168,10 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                                 <?php if ($p_copertina) : ?>
                                     <?php if ($p_url) : ?>
                                         <a href="<?php echo esc_url($p_url); ?>" class="chi-siamo__pubblicazione-cover-link"
-                                           <?php echo $p_link_attrs; ?>>
-                                    <?php endif; ?>
-                                            <img src="<?php echo esc_url($p_copertina['sizes']['medium']); ?>"
-                                                 alt="<?php echo esc_attr($p_copertina['alt']); ?>"
-                                                 class="chi-siamo__pubblicazione-cover-img">
-                                    <?php if ($p_url) : ?>
+                                            <?php echo $p_link_attrs; ?>>
+                                        <?php endif; ?>
+                                        <?php echo sp_image($p_copertina, 'medium_large', '(max-width: 767.98px) 40vw, 200px', ['class' => 'chi-siamo__pubblicazione-cover-img']); ?>
+                                        <?php if ($p_url) : ?>
                                         </a>
                                     <?php endif; ?>
                                 <?php endif; ?>
@@ -179,7 +179,7 @@ $pubblicazioni  = get_field('pubblicazioni');   // relationship, array of IDs
                                 <?php if ($p_url) : ?>
                                     <div class="chi-siamo__pubblicazione-cta dark position-md-absolute bottom-0 w-100">
                                         <a href="<?php echo esc_url($p_url); ?>" class="sp-btn w-100 justify-content-center"
-                                           <?php echo $p_link_attrs; ?>>
+                                            <?php echo $p_link_attrs; ?>>
                                             <span class="sp-btn__label"><?php echo esc_html($p_dl ? pll__('Scarica') : pll__('Compra')); ?></span>
                                         </a>
                                     </div>

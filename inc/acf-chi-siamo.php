@@ -48,9 +48,11 @@ add_action('acf/init', function() {
                 'return_format' => 'array',
             ],
         ],
-        'location' => [[
-            ['param' => 'post_slug', 'operator' => '==', 'value' => 'chi-siamo'],
-        ]],
+        // shared by the pages with a banner photo under the heading
+        'location' => [
+            [['param' => 'post_slug', 'operator' => '==', 'value' => 'chi-siamo']],
+            [['param' => 'post_slug', 'operator' => '==', 'value' => 'servizi']],
+        ],
         'menu_order'      => 0,
         'position'        => 'acf_after_title',
         'style'           => 'default',

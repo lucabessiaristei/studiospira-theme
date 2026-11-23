@@ -45,6 +45,7 @@
             &-img {
                 display: block;
                 width: 100%;
+                height: auto; // the img's height attribute would otherwise beat aspect-ratio
                 aspect-ratio: 5 / 7; // A4-ish
                 object-fit: cover;
             }

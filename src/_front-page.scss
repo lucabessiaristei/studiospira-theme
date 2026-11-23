@@ -29,7 +29,7 @@
         margin: 0 auto;
         background: $color-accent;
 
-        @media (max-width: 766.9px) {
+        @media (max-width: 767.98px) {
             transform: unset !important;
             background: unset !important;
         }
@@ -58,7 +58,7 @@
             // keep last: media queries add no specificity, so this only beats
             // the b/strong rule above by source order — when it sat earlier the
             // 40px from type('h1') won and mobile stayed at desktop size
-            @media (max-width: 766.98px) {
+            @media (max-width: 767.98px) {
                 p,
                 b,
                 strong {
@@ -144,6 +144,34 @@
     .front-page__intervento-title {
         grid-row: 2; // stays in the title row even when a card has no photo
         align-self: start;
+    }
+}
+
+// centered last row: an incomplete last row (e.g. 4 or 5 cards on 3 columns)
+// is centered instead of left-aligned. The grid gets twice the tracks, every
+// card spans two, and the cards of a short last row start one track later.
+// Used by the home featured grid and the Servizi example grids.
+.intervento-cards--centered {
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+
+        > .col { grid-column: span 2; }
+
+        // odd count: the last card is alone on its row
+        > .col:last-child:nth-child(2n + 1) { grid-column: 2 / span 2; }
+    }
+
+    @media (min-width: 992px) {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+
+        > .col { grid-column: span 2; }
+
+        // one card on the last row: in the middle
+        > .col:last-child:nth-child(3n + 1) { grid-column: 3 / span 2; }
+
+        // two cards on the last row: the first starts one track in, the
+        // second follows it
+        > .col:nth-last-child(2):nth-child(3n + 1) { grid-column: 2 / span 2; }
     }
 }
 

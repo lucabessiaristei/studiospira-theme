@@ -106,15 +106,18 @@ add_action('acf/init', function() {
                 'instructions'  => 'Codice es. 2.04',
             ],
             [
+                // choices (services grouped under their phase) are filled in
+                // by acf/load_field in acf-servizi.php; phases are only group
+                // headings, so they can't be ticked
                 'key'              => 'field_interventi_servizi',
                 'name'             => 'servizi',
-                'label'            => 'Servizi correlati',
-                'type'             => 'relationship',
-                'required'         => 0,
-                'post_type'        => ['servizi'],
-                'filters'          => ['search'],
-                'return_format'    => 'id',
-                'instructions'     => 'Opzionale. Se nessun intervento ha servizi, il filtro "Servizio" non compare nella pagina Interventi.',
+                'label'            => 'Servizi',
+                'type'             => 'checkbox',
+                'required'         => 0, // an intervento may have no services
+                'choices'          => [],
+                'layout'           => 'vertical',
+                'return_format'    => 'value',
+                'instructions'     => 'Spunta i servizi svolti. La fase si assegna in automatico.',
             ],
             [
                 'key'              => 'field_interventi_articoli',

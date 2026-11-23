@@ -18,19 +18,21 @@
                     <div class="interventi-grid intervento-cards row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3 gx-md-4 gx-lg-a gx-xl-c gy-4 gy-md-5 gy-lg-b gy-xl-d">
                         <?php while (have_posts()) :
                             the_post();
-                            $servizi_ids = get_field('servizi'); // relationship, array of IDs
+                            $fasi_slugs = wp_list_pluck(sp_intervento_fasi(get_the_ID()), 'post_name');
 
-                            $destinazione_ids = wp_get_post_terms(get_the_ID(), 'destinazione_uso', ['fields' => 'ids']);
-                            if (is_wp_error($destinazione_ids)) $destinazione_ids = [];
+                            $destinazione_ids = sp_intervento_terms('destinazione_uso', get_the_ID(), ['fields' => 'ids']); // from the Italian original
 
                             $posizione = get_field('posizione');
                             $posizione_slug = $posizione ? sanitize_title($posizione) : '';
                         ?>
                             <div class="col"
-                                 data-servizi="<?php echo esc_attr(implode(',', (array) $servizi_ids)); ?>"
+                                 data-servizi="<?php echo esc_attr(implode(',', $fasi_slugs)); ?>"
                                  data-destinazione-uso="<?php echo esc_attr(implode(',', $destinazione_ids)); ?>"
                                  data-posizione="<?php echo esc_attr($posizione_slug); ?>">
-                                <?php get_template_part('template-parts/intervento-card', null, ['intervento' => get_post()]); ?>
+                                <?php get_template_part('template-parts/intervento-card', null, [
+                                    'intervento' => get_post(),
+                                    'eager'      => $wp_query->current_post < 3, // first row is on screen at load
+                                ]); ?>
                             </div>
                         <?php endwhile; ?>
                     </div>

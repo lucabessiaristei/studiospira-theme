@@ -14,8 +14,9 @@ $interventi_filter_posizione_options = array_map(function($posizione) {
     return ['value' => sanitize_title($posizione), 'label' => $posizione];
 }, sp_get_used_posizioni());
 
-$interventi_filter_servizi_options = array_map(function($servizio) {
-    return ['value' => $servizio->ID, 'label' => get_the_title($servizio)];
+// phases, by slug: the same value goes in /interventi/?servizio=<slug>
+$interventi_filter_servizi_options = array_map(function($fase) {
+    return ['value' => $fase->post_name, 'label' => sp_title_i18n($fase->ID)];
 }, sp_get_used_servizi());
 
 $interventi_filter_groups = [

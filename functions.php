@@ -2,6 +2,7 @@
 
 require_once get_stylesheet_directory() . '/inc/cpt-interventi.php';
 require_once get_stylesheet_directory() . '/inc/acf-interventi.php';
+require_once get_stylesheet_directory() . '/inc/acf-servizi.php';
 require_once get_stylesheet_directory() . '/inc/cpt-pubblicazioni.php';
 require_once get_stylesheet_directory() . '/inc/acf-pubblicazioni.php';
 require_once get_stylesheet_directory() . '/inc/cpt-articoli.php';

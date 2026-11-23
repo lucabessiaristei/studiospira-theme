@@ -1,7 +1,7 @@
 <?php
 
 // "Interventi in evidenza" — the home's featured grid, picked from its own
-// admin page (always in the sidebar, right under Interventi) instead of a
+// admin page (always in the sidebar, right above Interventi) instead of a
 // field buried in the home page editor. Stored once as Italian intervento IDs
 // in the sp_interventi_evidenza option; each language's home swaps in the
 // matching translation. Needs only edit_pages, so the "Redattore contenuti"
@@ -49,7 +49,7 @@ add_action('admin_menu', function() {
         'interventi-evidenza',
         'sp_render_interventi_evidenza_page',
         'dashicons-star-filled',
-        '26.5' // right after the Interventi CPT (26)
+        '25.9' // right above the Interventi CPT (26, first CPT registered after Comments at 25)
     );
 });
 

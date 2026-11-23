@@ -120,23 +120,19 @@
 })();
 
 (function () {
-    var dati = document.querySelector('.intervento__dati');
+    var stickies = document.querySelectorAll('.sp-sticky');
     var header = document.getElementById('masthead');
 
-    if (!dati || !header) return;
+    if (!stickies.length || !header) return;
 
     var mq = window.matchMedia('(min-width: 992px)');
 
     function updateStickyState() {
-        if (!mq.matches) {
-            dati.classList.remove('no-sticky');
-            return;
-        }
+        var readableHeight = window.innerHeight - (2 * header.offsetHeight);
 
-        var headerHeight = header.offsetHeight;
-        var readableHeight = window.innerHeight - (2 * headerHeight);
-
-        dati.classList.toggle('no-sticky', dati.getBoundingClientRect().height > readableHeight);
+        stickies.forEach(function (el) {
+            el.classList.toggle('no-sticky', mq.matches && el.getBoundingClientRect().height > readableHeight);
+        });
     }
 
     window.addEventListener('resize', updateStickyState);
@@ -432,6 +428,100 @@
     });
 })();
 
+// Servizi index: the lines between the phase titles grow downward one after
+// the other (the titles themselves don't animate). Strictly in order: a line
+// grows only once it (or one below it) has been in view AND the one above has
+// started, at least STEP ms later — fast scrolling queues lines instead of
+// breaking the sequence. Classes are added here, never in markup, so it's all
+// visible without JS
+(function () {
+    var nav = document.querySelector('.servizi__indice');
+    if (!nav || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var STEP = 120; // ms between one line and the next
+    var items = Array.prototype.slice.call(nav.querySelectorAll('.servizi__indice-line'));
+    if (!items.length) return;
+    var seenUpTo = -1; // highest index that has been in view
+    var next = 0;      // next index to reveal
+    var lastReveal = 0;
+    var timer = null;
+
+    items.forEach(function (item) { item.classList.add('is-growing'); });
+
+    function pump() {
+        if (timer || next > seenUpTo || next >= items.length) return;
+
+        timer = window.setTimeout(function () {
+            timer = null;
+            items[next].classList.add('is-revealed');
+            lastReveal = Date.now();
+            next++;
+            pump();
+        }, Math.max(0, lastReveal + STEP - Date.now()));
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            seenUpTo = Math.max(seenUpTo, items.indexOf(entry.target));
+            observer.unobserve(entry.target);
+        });
+        pump();
+    }, { threshold: 0.1 });
+
+    items.forEach(function (item) { observer.observe(item); });
+})();
+
+// carousels (Servizi examples on phones): touch scrolls natively, this adds
+// click-and-drag for mouse/pen so they scroll with any pointer. A drag that
+// moved doesn't count as a click on the card underneath.
+(function () {
+    var carousels = document.querySelectorAll('.servizi__esempi');
+
+    carousels.forEach(function (el) {
+        var startX = 0;
+        var startScroll = 0;
+        var moved = false;
+        var dragging = false;
+
+        el.addEventListener('pointerdown', function (e) {
+            if (e.pointerType === 'touch' || el.scrollWidth <= el.clientWidth) return;
+            dragging = true;
+            moved = false;
+            startX = e.clientX;
+            startScroll = el.scrollLeft;
+        });
+
+        el.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dx = e.clientX - startX;
+            if (!moved && Math.abs(dx) > 5) {
+                moved = true;
+                el.classList.add('is-dragging');
+                el.setPointerCapture(e.pointerId);
+            }
+            if (moved) el.scrollLeft = startScroll - dx;
+        });
+
+        function end() {
+            if (!dragging) return;
+            dragging = false;
+            if (moved) el.classList.remove('is-dragging');
+        }
+
+        el.addEventListener('pointerup', end);
+        el.addEventListener('pointercancel', end);
+
+        el.addEventListener('click', function (e) {
+            if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+        }, true);
+
+        // the browser's native image/link drag would hijack the gesture
+        el.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    });
+})();
+
 // staggered fade-in for the card grids (home, archive, gallery). One shared
 // observer; the delay is per intersection batch, so each row staggers as it
 // scrolls in instead of inheriting an ever-growing delay from its grid index.
@@ -439,7 +529,8 @@
     var selectors = [
         '.front-page__interventi .row > .col',
         '.interventi-archive .interventi-grid > .col',
-        '.intervento__galleria .row > .col'
+        '.intervento__galleria .row > .col',
+        '.servizi__esempi > .col'
     ];
 
     if (!('IntersectionObserver' in window)) return;
@@ -719,4 +810,29 @@
         activeFilters[e.detail.filter] = e.detail.value;
         applyFilters();
     });
+})();
+
+// /interventi/?servizio=<phase-slug>: preselects the phase on load (the Servizi
+// page buttons link here) and keeps the URL in step with the filter, so a
+// filtered list can be shared. The parameter name must stay stable.
+(function () {
+    var filter = document.querySelector('.interventi-filter[data-filter="servizio"]');
+    if (!filter || !window.URLSearchParams || !window.history.replaceState) return;
+
+    document.addEventListener('interventi-filter:change', function (e) {
+        if (e.detail.filter !== 'servizio') return;
+        var url = new URL(window.location.href);
+        if (e.detail.value) url.searchParams.set('servizio', e.detail.value);
+        else url.searchParams.delete('servizio');
+        window.history.replaceState(null, '', url);
+    });
+
+    var slug = new URLSearchParams(window.location.search).get('servizio');
+    if (!slug) return;
+
+    var option = Array.prototype.find.call(
+        filter.querySelectorAll('.interventi-filter__option'),
+        function (o) { return o.dataset.value === slug; }
+    );
+    if (option) option.click();
 })();

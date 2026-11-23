@@ -1,6 +1,7 @@
 .banner_photo {
     display: block;
     width: 100%;
+    height: auto; // the img's height attribute would otherwise beat aspect-ratio
     aspect-ratio: 16 / 8;
     object-fit: cover;
     object-position: top;

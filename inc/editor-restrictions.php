@@ -16,8 +16,9 @@ add_filter('tiny_mce_before_init', function($settings) {
     return $settings;
 });
 
-// Contatti's template renders a contact form, not the_content() — the
-// editor box has nothing to do there
+// Contatti's template renders a contact form and Servizi's is built from the
+// servizi, neither uses the_content() — the editor box has nothing to do there.
+// sp_post_slug_is() also matches their translations ("contact", "services")
 add_action('admin_init', function() {
     global $pagenow;
     if (!in_array($pagenow, ['post.php', 'post-new.php'], true)) return;
@@ -25,7 +26,7 @@ add_action('admin_init', function() {
     $post_id = isset($_GET['post']) ? (int) $_GET['post'] : 0;
     if (!$post_id) return;
     if (get_post_type($post_id) !== 'page') return;
-    if (get_post_field('post_name', $post_id) !== 'contatti') return;
+    if (!sp_post_slug_is('contatti', $post_id) && !sp_post_slug_is('servizi', $post_id)) return;
 
     remove_post_type_support('page', 'editor');
 });

@@ -74,17 +74,7 @@
     &__dati {
         // 0.9rem gap has no matching spacer step
         gap: 0.9rem;
-
-        @media (min-width: 992px) {
-            align-self: flex-start;
-
-            position: sticky;
-            top: calc(#{$header-height} + 4rem);
-
-            &.no-sticky {
-                position: static;
-            }
-        }
+        // sticky on desktop via .sp-sticky (style.scss)
     }
 
     &__dato {

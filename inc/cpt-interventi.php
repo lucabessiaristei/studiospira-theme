@@ -43,21 +43,36 @@ add_action('init', function() {
             'edit_item'          => 'Modifica servizio',
             'view_item'          => 'Visualizza servizio',
         ],
-        'public'            => true,
+        // no public URLs of their own: servizi only appear on the Servizi page
+        // and inside interventi
+        'public'            => false,
+        'show_ui'           => true,
+        'show_in_menu'      => true,
         'has_archive'       => false,
+        'rewrite'           => false,
         'show_in_rest'      => true,
-        'supports'          => ['title'],
+        // two levels: a top-level servizio is a phase of the Servizi page
+        // (e.g. "Conoscere l'edificio"), its children are the actual services;
+        // page-attributes gives the parent picker and the order field
+        'hierarchical'      => true,
+        'supports'          => ['title', 'page-attributes'],
         'menu_icon'         => 'dashicons-list-view',
-        'rewrite'           => ['slug' => 'servizi'],
     ]);
 });
 
 // register CPTs with Polylang so they are translatable
 add_filter('pll_get_post_types', function($post_types) {
     $post_types['interventi'] = 'interventi';
-    $post_types['servizi']    = 'servizi';
     return $post_types;
 });
+
+// servizi are NOT translatable: each one exists once, shared by both languages,
+// with the English text in "_en" fields (see acf-servizi.php). Unset so a
+// stale tick in Polylang's settings can't turn it back on.
+add_filter('pll_get_post_types', function($post_types) {
+    unset($post_types['servizi']);
+    return $post_types;
+}, 99);
 
 // destinazione_uso is deliberately NOT translatable: each term is shared by both
 // languages, with the English name in the "nome_en" term field (see
@@ -87,6 +102,11 @@ add_filter('pll_copy_post_metas', function($metas, $sync) {
 }, 10, 2);
 
 // destinazione_uso terms are internal-only tags — no need for slug/description
+add_filter('manage_edit-destinazione_uso_columns', function($columns) {
+    unset($columns['description']);
+    return $columns;
+});
+
 add_action('admin_head-edit-tags.php', 'sp_hide_destinazione_uso_term_fields');
 add_action('admin_head-term.php', 'sp_hide_destinazione_uso_term_fields');
 function sp_hide_destinazione_uso_term_fields() {

@@ -47,6 +47,8 @@ $icon-h-nav: 14px;
     text-decoration: none;
     cursor: pointer;
     color: inherit;
+    // a button label never breaks onto two lines
+    white-space: nowrap;
 }
 
 @mixin sp-hover {

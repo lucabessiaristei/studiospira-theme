@@ -141,7 +141,7 @@ h5 {
     border-color: $color-text;
 }
 
-@media (min-width: 767px) {
+@media (min-width: 768px) {
     .home .section-label {
         transform: translateY(-100%);
     }
@@ -171,5 +171,22 @@ h5 {
 @import "front-page";
 @import "intervento";
 @import "chi-siamo";
+@import "servizi";
 @import "contatti";
 @import "footer";
+
+// after the imports: needs $header-height from _header.scss
+// desktop sticky column (intervento data, servizi phase intro). main.js adds
+// .no-sticky when the element is taller than the viewport can show, so it
+// scrolls normally instead of having its bottom cut off
+.sp-sticky {
+    @media (min-width: 992px) {
+        align-self: flex-start;
+        position: sticky;
+        top: calc(#{$header-height} + 4rem);
+
+        &.no-sticky {
+            position: static;
+        }
+    }
+}

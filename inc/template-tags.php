@@ -35,6 +35,9 @@ function sp_breadcrumb() {
     echo '</ol></nav>';
 }
 
+// phases with at least one published intervento ticking one of their
+// services, in page order — the options of the Interventi "Servizio" filter.
+// A phase with no interventi yet simply doesn't show up.
 function sp_get_used_servizi() {
     $intervento_ids = get_posts([
         'post_type'      => 'interventi',
@@ -43,25 +46,14 @@ function sp_get_used_servizi() {
         'posts_per_page' => -1,
     ]);
 
-    $servizio_ids = [];
+    $used = [];
     foreach ($intervento_ids as $intervento_id) {
-        $servizi = get_field('servizi', $intervento_id);
-        if (is_array($servizi)) {
-            $servizio_ids = array_merge($servizio_ids, $servizi);
-        }
+        foreach (sp_intervento_fasi($intervento_id) as $fase) $used[$fase->ID] = true;
     }
-    $servizio_ids = array_unique($servizio_ids);
 
-    if (!$servizio_ids) return [];
-
-    return get_posts([
-        'post_type'      => 'servizi',
-        'post_status'    => 'publish',
-        'post__in'       => $servizio_ids,
-        'orderby'        => 'title',
-        'order'          => 'ASC',
-        'posts_per_page' => -1,
-    ]);
+    return array_values(array_filter(sp_get_servizi_fasi(), function($fase) use ($used) {
+        return isset($used[$fase->ID]);
+    }));
 }
 
 function sp_get_used_posizioni() {
@@ -80,4 +72,56 @@ function sp_get_used_posizioni() {
 
     ksort($posizioni);
     return array_values($posizioni);
+}
+
+// filtered Interventi lists (/interventi/?servizio=...) are thin near-duplicates
+// of the full list: keep them out of the index, point search engines to the
+// unfiltered page
+function sp_is_filtered_interventi() {
+    return is_post_type_archive('interventi') && isset($_GET['servizio']);
+}
+
+add_filter('wp_robots', function($robots) {
+    if (sp_is_filtered_interventi()) {
+        $robots['noindex'] = true;
+        $robots['follow']  = true;
+        unset($robots['max-image-preview']);
+    }
+    return $robots;
+});
+
+add_action('wp_head', function() {
+    if (sp_is_filtered_interventi()) {
+        echo '<link rel="canonical" href="' . esc_url(get_post_type_archive_link('interventi')) . '">' . "\n";
+    }
+});
+
+// --- Responsive images ----------------------------------------------------------
+// Every photo goes through wp_get_attachment_image(), so it gets a srcset of
+// the sizes WordPress generates on upload (300 → 2048px) and the browser picks
+// the smallest file that's sharp at the displayed width — new uploads included,
+// nothing to do per photo. $sizes describes that displayed width per breakpoint.
+
+// container inner width per breakpoint (Bootstrap container minus px-4 = 3rem)
+const SP_SIZES_FULL = '(min-width: 1400px) 1272px, (min-width: 1200px) 1092px, (min-width: 992px) 912px, (min-width: 768px) 672px, (min-width: 576px) 492px, calc(100vw - 3rem)';
+// one card of the 3 / 2 / 1-column intervento grids
+const SP_SIZES_CARD = '(min-width: 1400px) 380px, (min-width: 992px) 30vw, (min-width: 768px) 45vw, calc(100vw - 3rem)';
+
+// $image: ACF image array or attachment ID. Lazy unless $attrs says otherwise.
+function sp_image($image, $size, $sizes, $attrs = []) {
+    $id = is_array($image) ? ($image['ID'] ?? 0) : (int) $image;
+    if (!$id) return '';
+    $attrs = array_merge(['sizes' => $sizes, 'loading' => 'lazy'], $attrs);
+    if (is_array($image) && !isset($attrs['alt'])) $attrs['alt'] = $image['alt'] ?? '';
+    return wp_get_attachment_image($id, $size, false, $attrs);
+}
+
+// the banner/cover photo at the top of a page: full container width, loaded
+// straight away with high priority (it's the first thing on screen)
+function sp_banner_image($image) {
+    return sp_image($image, '2048x2048', SP_SIZES_FULL, [
+        'class'         => 'banner_photo',
+        'loading'       => 'eager',
+        'fetchpriority' => 'high',
+    ]);
 }
