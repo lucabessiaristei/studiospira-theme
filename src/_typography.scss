@@ -9,8 +9,7 @@ $primary-font-bold:      700;
 $secondary-font:         'RX100', sans-serif;
 $secondary-font-regular:  400;
 
-// declared explicitly here instead of relying only on theme.json's fontFace
-// (theme.json auto @font-face generation needs WP 6.4+ and can silently no-op)
+// @font-face declared explicitly
 @font-face {
     font-family: 'RX100';
     src: url('../assets/fonts/RX100-Regular.woff2') format('woff2'),

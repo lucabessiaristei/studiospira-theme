@@ -32,7 +32,7 @@ add_action('init', function() {
         'show_in_rest'      => true,
         'show_admin_column' => true,
         'rewrite'           => ['slug' => 'destinazione-uso'],
-        'meta_box_cb'       => false, // managed via the ACF taxonomy field instead, see acf-interventi.php
+        'meta_box_cb'       => false, // set via ACF
     ]);
 
     register_post_type('servizi', [
@@ -43,17 +43,14 @@ add_action('init', function() {
             'edit_item'          => 'Modifica servizio',
             'view_item'          => 'Visualizza servizio',
         ],
-        // no public URLs of their own: servizi only appear on the Servizi page
-        // and inside interventi
+        // no public URLs: shown only on the Servizi page and in interventi
         'public'            => false,
         'show_ui'           => true,
         'show_in_menu'      => true,
         'has_archive'       => false,
         'rewrite'           => false,
         'show_in_rest'      => true,
-        // two levels: a top-level servizio is a phase of the Servizi page
-        // (e.g. "Conoscere l'edificio"), its children are the actual services;
-        // page-attributes gives the parent picker and the order field
+        // top-level = phase, children = services
         'hierarchical'      => true,
         'supports'          => ['title', 'page-attributes'],
         'menu_icon'         => 'dashicons-list-view',
@@ -66,24 +63,19 @@ add_filter('pll_get_post_types', function($post_types) {
     return $post_types;
 });
 
-// servizi are NOT translatable: each one exists once, shared by both languages,
-// with the English text in "_en" fields (see acf-servizi.php). Unset so a
-// stale tick in Polylang's settings can't turn it back on.
+// servizi aren't translatable (English in "_en" fields)
 add_filter('pll_get_post_types', function($post_types) {
     unset($post_types['servizi']);
     return $post_types;
 }, 99);
 
-// destinazione_uso is deliberately NOT translatable: each term is shared by both
-// languages, with the English name in the "nome_en" term field (see
-// i18n-fields.php). Unset rather than just not added, so a stale tick in
-// Polylang's settings can't turn it back on.
+// destinazione_uso isn't translatable (English in "nome_en")
 add_filter('pll_get_taxonomies', function($taxonomies) {
     unset($taxonomies['destinazione_uso']);
     return $taxonomies;
 }, 99);
 
-// project metadata (dates, budget, team, relationships) — not language-dependent, always copied identically
+// project metadata, copied as-is to translations
 add_filter('pll_copy_post_metas', function($metas, $sync) {
     $interventi_metas = [
         'copertina',
@@ -101,7 +93,7 @@ add_filter('pll_copy_post_metas', function($metas, $sync) {
     return array_merge($metas, $interventi_metas);
 }, 10, 2);
 
-// destinazione_uso terms are internal-only tags — no need for slug/description
+// internal tags: no slug/description
 add_filter('manage_edit-destinazione_uso_columns', function($columns) {
     unset($columns['description']);
     return $columns;

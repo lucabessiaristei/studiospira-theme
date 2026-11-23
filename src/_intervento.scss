@@ -61,16 +61,6 @@
 
 .intervento {
 
-    // &__articoli {
-    //     // 3.5rem falls between the bootstrap spacer steps (3rem/4rem) — no utility matches
-    //     margin-top: 3.5rem;
-    // }
-
-    // &__articolo {
-    //     border-bottom: 1px solid $color-accent;
-
-    // }
-
     &__dati {
         // 0.9rem gap has no matching spacer step
         gap: 0.9rem;
@@ -150,16 +140,14 @@
     }
 }
 
-// one open state, shared by all three triggers; the values it reads are set
-// per breakpoint on __menu
+// open state, shared by all triggers
 @mixin interventi-filter-open($state) {
     &#{$state} .interventi-filter__menu {
         max-height: var(--menu-open-height);
         overflow-y: auto;
     }
 
-    // spiral stays rotated while the menu is open, even once the pointer
-    // has moved off the button and into the menu
+    // spiral stays rotated while open
     &#{$state} .interventi-filter__toggle::after {
         transform: rotate(180deg);
     }
@@ -170,9 +158,7 @@
     display: flex;
     align-items: center;
 
-    // sits below the divider lines (1000) on purpose: they paint over its top
-    // edge and become its top border. border-top stays 0, or a closed menu
-    // would show top + bottom stacked as a 2px line.
+    // below the divider lines, which act as its top border
     &__menu {
         --menu-open-height: 60vh;
 
@@ -220,10 +206,7 @@
         width: 100%;
         padding-bottom: 1rem;
 
-        // front-to-back in document order: filters only overlap downwards, so
-        // each row (menu and rule together) stays above the ones beneath it.
-        // Static rather than raised while open, which would drop back the
-        // instant a menu started closing.
+        // static stacking: each row stays above the ones beneath
         @for $i from 1 through 4 {
             &:nth-child(#{$i}) {
                 z-index: (5 - $i) * 10;
@@ -303,9 +286,8 @@
     }
 }
 
-// heading, reset and list share one flex container so the reset can change row
-// per breakpoint without being duplicated in the markup. Gaps are set here, not
-// via `gap-*`, whose !important would block zeroing row-gap on desktop.
+// heading, reset and list in one flex container (gaps set here: gap-*'s
+// !important would block row-gap: 0)
 .interventi-filters {
     column-gap: 1.5rem;
     row-gap: 1.2rem;
@@ -353,16 +335,14 @@
     }
 }
 
-// anchored to the bottom of the whole bar, which is the wrong y on mobile —
-// there each filter carries its own __rule instead
+// wrong y on mobile, where each filter has its own __rule
 .interventi-filters__rule {
     @media (max-width: 991.98px) {
         display: none;
     }
 }
 
-// space is always reserved (never collapsed) so showing the button can't
-// reflow the grid below
+// space always reserved, so showing the button doesn't reflow
 .interventi-filters__reset-wrap {
     display: flex;
     align-items: center;

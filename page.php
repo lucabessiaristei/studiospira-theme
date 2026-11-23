@@ -6,10 +6,7 @@
     $slug = get_post_field('post_name', get_the_ID());
     $part = 'template-parts/page/' . $slug;
 
-    // a translation gets its own slug (e.g. "contact" for "contatti"), so if
-    // that slug has no matching template, fall back to the default-language
-    // translation's slug/template — the page-specific markup (forms, data
-    // blocks, etc.) lives there, not in the_content()
+    // translations fall back to the Italian page's template
     if (!locate_template($part . '.php') && function_exists('pll_get_post') && function_exists('pll_default_language')) {
         $default_id = pll_get_post(get_the_ID(), pll_default_language());
         if ($default_id) {

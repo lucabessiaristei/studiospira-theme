@@ -43,9 +43,7 @@ function sp_contact_form_email_wrap($title, $body_html)
     $email = get_option('sp_contatti_email');
     $telefono = get_option('sp_contatti_telefono');
 
-    // Familjen Grotesk is a progressive enhancement here: Apple Mail/most
-    // webmail will load it via this @import, Outlook/Gmail apps ignore it and
-    // fall back to the system-sans stack declared on every inline font-family.
+    // web font where supported, system sans elsewhere
     $font_stack = "'Familjen Grotesk',Arial,Helvetica,sans-serif";
 
     ob_start();
@@ -260,10 +258,7 @@ function sp_contact_form_email_wrap($title, $body_html)
     return ob_get_clean();
 }
 
-// admin-post.php runs outside the frontend request Polylang uses to detect
-// the current language, so pll__() would silently fall back to the default
-// language here — the visitor's language is captured in a hidden field
-// instead and threaded through explicitly with pll_translate_string()
+// admin-post.php has no Polylang language: it comes from a hidden field
 function sp_contatti_t($string, $lang)
 {
     return pll_translate_string($string, $lang);
@@ -302,11 +297,7 @@ function sp_contatti_confirmation_email_body($nome, $lang)
 }
 
 // --- Honeypot -----------------------------------------------------------------
-// The form carries its render time, signed so it can't be forged. A submission
-// with the hidden "sito_web" field filled in, or sent less than
-// SP_CONTATTI_MIN_SECONDS after the page was rendered, is a bot: it gets the
-// normal success page (so it learns nothing) and no email is sent. Only a
-// minimum is checked: with page caching the render time can be old.
+// a filled "sito_web" field or a too-fast submission is a bot: fake success, no email
 const SP_CONTATTI_MIN_SECONDS = 3;
 
 function sp_contatti_time_token()
@@ -328,8 +319,7 @@ function sp_contatti_is_bot()
 
 function sp_handle_contatti_submit()
 {
-    // redirect back to whichever language page the form was actually
-    // submitted from, rather than hardcoding the Italian /contatti/ URL
+    // back to the page in the language it was sent from
     $redirect_base = wp_get_referer() ?: home_url('/contatti');
 
     if (!isset($_POST['sp_contatti_nonce']) || !wp_verify_nonce($_POST['sp_contatti_nonce'], 'sp_contatti_submit')) {
@@ -366,8 +356,7 @@ function sp_handle_contatti_submit()
 
     $admin_lang = pll_default_language();
 
-    // if the message to the studio doesn't go out, the visitor gets the error
-    // message (not a false "sent") and no confirmation email
+    // if the studio email fails: show the error, skip the confirmation
     $sent = wp_mail(
         $recipient,
         sp_contatti_t('Nuovo messaggio dal form contatti', $admin_lang),

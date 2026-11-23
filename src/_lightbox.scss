@@ -55,8 +55,7 @@
         margin: 0;
     }
 
-    // riga [prev | foto | next]: i bottoni sono flex item, non piu' sovrapposti,
-    // cosi' la foto non puo' finire sotto di loro a nessuna proporzione
+    // [prev | photo | next] row: buttons never overlap the photo
     &__body {
         position: relative;
         flex: 1 1 auto;
@@ -69,8 +68,7 @@
     &__content {
         position: relative;
         flex: 1 1 auto;
-        // senza min-width lo spazio richiesto dalla foto non si comprime e
-        // sono i bottoni a cedere
+        // without min-width the buttons shrink instead of the photo
         min-width: 0;
     }
 
@@ -86,8 +84,7 @@
         background: transparent;
         cursor: pointer;
 
-        // display:flex batte l'[hidden] dello UA stylesheet: senza questa riga
-        // i bottoni resterebbero visibili anche con una foto sola
+        // display:flex overrides [hidden]
         &[hidden] {
             display: none;
         }
@@ -126,8 +123,7 @@
     @media (max-width: 767.98px) {
         &__container {
             gap: 3rem;
-            // la riga delle slide arriva ai bordi dello schermo: il rientro
-            // laterale resta solo al contatore e al pulsante chiudi
+            // slides go edge to edge
             padding-inline: 0;
             padding-bottom: 3rem;
         }
@@ -137,8 +133,7 @@
             padding-inline: 1.5rem;
         }
 
-        // il pulsante e' assoluto e il suo right: 0 guarda il padding box
-        // dell'header, quindi il rientro va ripetuto qui
+        // absolute right: 0 ignores padding, repeat it
         &__close {
             right: 1.5rem;
         }
@@ -154,8 +149,7 @@
             display: flex;
             overflow-x: auto;
             overscroll-behavior-x: contain;
-            // nessuno snap del browser: si fermerebbe di scatto. A fine corsa
-            // ci pensa lo script, con una discesa in ease-out
+            // no snap: the script settles with ease-out
             scrollbar-width: none;
             cursor: grab;
             user-select: none;

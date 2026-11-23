@@ -1,9 +1,7 @@
 .chi-siamo {
 
-    // sotto lg l'aside si dissolve nella griglia: lista dati e certificazione
-    // diventano due righe indipendenti, cosi' la lista puo' salire sopra al testo
-    // (order-first) e la certificazione restare dopo. Nel markup l'aside usa
-    // d-lg-flex, altrimenti il !important di .d-flex vincerebbe su questo display
+    // below lg the aside's children join the grid so the list can go first
+    // (d-lg-flex in markup)
     &__dati {
         @media (max-width: 991.98px) {
             display: contents;
@@ -11,7 +9,7 @@
     }
 
     &__dati-list {
-        // 0.9rem gap has no matching spacer step — same as .intervento__dati
+        // no matching spacer step
         gap: 0.9rem;
     }
 
@@ -51,16 +49,14 @@
             }
         }
 
-        // il titolo e' un link come la cover e il pulsante: qui va tolta solo la
-        // sottolineatura che la regola generale sugli <a> gli darebbe
+        // title link: no underline
         &-title-link {
             color: inherit;
             text-decoration: none;
         }
     }
 
-    // cover e titolo puntano allo stesso indirizzo del pulsante, quindi al
-    // passaggio del mouse ne accendono lo stato hover
+    // cover and title trigger the button's hover
     @media (hover: hover) {
         &__pubblicazione:has(&__pubblicazione-cover-link:hover) .sp-btn,
         &__pubblicazione:has(&__pubblicazione-title-link:hover) .sp-btn {
@@ -74,10 +70,7 @@
         }
     }
 
-    // sotto md la card si riorganizza in [cover | titolo] / [dati] / [pulsante]:
-    // cover e info si sciolgono, cosi' i quattro blocchi diventano celle della
-    // stessa griglia. Nel markup la card usa d-md-flex, altrimenti il !important
-    // di .d-flex vincerebbe su questo display
+    // below md: [cover | title] / [data] / [button] grid (d-md-flex in markup)
     @media (max-width: 767.98px) {
         &__pubblicazione {
             display: grid;
@@ -92,7 +85,7 @@
                 display: contents;
             }
 
-            // senza link attorno alla copertina il grid-area lo prende l'immagine
+            // no cover link: the image takes the grid area
             &-cover-link,
             &-cover-img { grid-area: cover; }
             &-testa     { grid-area: testa; }

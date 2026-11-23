@@ -8,8 +8,7 @@
 
     var ticking = false;
 
-    // read from the hero's live rect rather than a cached scroll threshold,
-    // which went stale on any post-load layout shift (fonts, images)
+    // live rect: a cached threshold goes stale on layout shifts
     function apply() {
         ticking = false;
         header.classList.toggle(
@@ -27,8 +26,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
 
-    // initial state without transitions, so loading mid-page doesn't fade in
-    // from the unscrolled colour
+    // no transition on first paint
     header.classList.add('is-init');
     apply();
     window.requestAnimationFrame(function () {
@@ -154,8 +152,7 @@
     var container = root.querySelector('.lightbox__container');
     var track     = root.querySelector('.lightbox__track');
 
-    // due modi di navigare: da md in su crossfade comandato dalle frecce, sotto
-    // md uno scroller orizzontale che si trascina e gira all'infinito
+    // md+: arrow crossfade; below md: infinite drag scroller
     var mqMobile = window.matchMedia('(max-width: 767.98px)');
 
     var groups = {};
@@ -216,8 +213,7 @@
 
     // --- scroller infinito, sotto md ---
 
-    // ordine [ultima, ...tutte, prima]: arrivati su un clone si salta di colpo
-    // sulla slide vera corrispondente, cosi' lo scorrimento non ha capolinea
+    // [last, ...all, first]: landing on a clone jumps to the real slide
     function buildTrack() {
         var list = items();
         var slides = list.length > 1
@@ -247,8 +243,7 @@
         track.scrollLeft = (currentIndex + offset) * track.clientWidth;
     }
 
-    // discesa in ease-out sulla slide: lo snap del browser fermava di colpo,
-    // qui la corsa si esaurisce da sola
+    // ease-out settle instead of the browser's abrupt snap
     var animId = null;
 
     function stopGlide() {
@@ -274,8 +269,7 @@
         });
     }
 
-    // a fine corsa: il rientro dal clone e' un salto secco (deve restare
-    // invisibile), l'assestamento sulla slide piu' vicina e' animato
+    // clone jump is instant, settling is animated
     function onTrackSettled() {
         var list  = items();
         var width = track.clientWidth;
@@ -303,14 +297,13 @@
         scrollTimer = window.setTimeout(onTrackSettled, 140);
     });
 
-    // il touch scorre gia' da solo, con l'inerzia del browser: qui servono
-    // mouse e penna, che su un contenitore scrollabile non trascinano niente
+    // touch scrolls natively; this adds mouse/pen drag
     var dragging   = false;
     var dragStartX = 0;
     var dragStartL = 0;
 
     track.addEventListener('pointerdown', function (e) {
-        // un tocco nuovo interrompe la discesa in corso, dito o mouse che sia
+        // a new press stops the settle
         stopGlide();
 
         if (e.pointerType === 'touch' || !mqMobile.matches) return;
@@ -389,8 +382,7 @@
         el.addEventListener('click', close);
     });
 
-    // il container copre tutta la viewport, quindi il backdrop non riceve piu'
-    // click: chiudo quando il click cade nel vuoto attorno alla foto
+    // the container covers the viewport: close on clicks outside the photo
     container.addEventListener('click', function (e) {
         if (e.target.closest('.lightbox__header, .lightbox__nav, .lightbox__content')) return;
         close();
@@ -407,8 +399,7 @@
         if (e.key === 'ArrowRight') step(1);
     });
 
-    // rotazione o finestra ridimensionata oltre la soglia: si riparte nell'altro
-    // modo dalla foto in cui si era
+    // breakpoint crossed: rebuild in the other mode at the same photo
     mqMobile.addEventListener('change', function () {
         if (root.classList.contains('is-open')) render();
     });
@@ -428,12 +419,7 @@
     });
 })();
 
-// Servizi index: the lines between the phase titles grow downward one after
-// the other (the titles themselves don't animate). Strictly in order: a line
-// grows only once it (or one below it) has been in view AND the one above has
-// started, at least STEP ms later — fast scrolling queues lines instead of
-// breaking the sequence. Classes are added here, never in markup, so it's all
-// visible without JS
+// Servizi index: lines grow in sequence as they scroll in (classes added here only)
 (function () {
     var nav = document.querySelector('.servizi__indice');
     if (!nav || !('IntersectionObserver' in window)) return;
@@ -473,9 +459,7 @@
     items.forEach(function (item) { observer.observe(item); });
 })();
 
-// carousels (Servizi examples on phones): touch scrolls natively, this adds
-// click-and-drag for mouse/pen so they scroll with any pointer. A drag that
-// moved doesn't count as a click on the card underneath.
+// mouse/pen drag for carousels; a drag doesn't click the card
 (function () {
     var carousels = document.querySelectorAll('.servizi__esempi');
 
@@ -522,9 +506,7 @@
     });
 })();
 
-// staggered fade-in for the card grids (home, archive, gallery). One shared
-// observer; the delay is per intersection batch, so each row staggers as it
-// scrolls in instead of inheriting an ever-growing delay from its grid index.
+// staggered fade-in for card grids, delay per intersection batch
 (function () {
     var selectors = [
         '.front-page__interventi .row > .col',
@@ -567,8 +549,7 @@
 
     if (!filters.length) return;
 
-    // click-to-open is only for devices that can't hover; the rest open via
-    // CSS hover at any width
+    // click-to-open only on devices that can't hover
     var mqHover = window.matchMedia('(hover: hover)');
     var mqDesktop = window.matchMedia('(min-width: 992px)');
 
@@ -624,10 +605,7 @@
             option.addEventListener('click', function (event) {
                 if (!mqHover.matches) {
                     filter.classList.remove('is-open');
-                    // tapping the option focuses it, and :focus-within would
-                    // hold the menu open — there's no mouseleave on touch to
-                    // blur it. detail is 0 for keyboard activation, which
-                    // should keep its focus.
+                    // blur on tap so :focus-within doesn't hold the menu open (keyboard keeps focus)
                     if (event.detail > 0) option.blur();
                 }
 
@@ -754,8 +732,7 @@
                 }
             });
 
-            // forces layout so the transform above actually paints before
-            // it's cleared below — otherwise there's nothing to animate from
+            // force layout so the transform paints before it's cleared
             void document.body.offsetHeight;
 
             cols.forEach(function (col) {
@@ -798,8 +775,7 @@
             if (event.propertyName === 'height') gridWrap.style.height = '';
         });
 
-        // when start and end heights match no transition fires, so the inline
-        // height above is never cleared and clips the grid once it restacks
+        // equal heights fire no transition: clear the height here
         window.addEventListener('resize', function () {
             gridWrap.style.height = '';
         });
@@ -812,9 +788,7 @@
     });
 })();
 
-// /interventi/?servizio=<phase-slug>: preselects the phase on load (the Servizi
-// page buttons link here) and keeps the URL in step with the filter, so a
-// filtered list can be shared. The parameter name must stay stable.
+// ?servizio=<phase-slug>: preselects the filter and stays in sync with it
 (function () {
     var filter = document.querySelector('.interventi-filter[data-filter="servizio"]');
     if (!filter || !window.URLSearchParams || !window.history.replaceState) return;

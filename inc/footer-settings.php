@@ -108,8 +108,7 @@ add_action('admin_init', function() {
             printf(
                 '<input type="password" name="sp_turnstile_secret_key" value="" placeholder="%s" class="regular-text" autocomplete="new-password"%s>
                  <p class="description">Chiave segreta, usata per la verifica lato server. Non condividerla. Per sostituirla incolla la nuova chiave; lasciando il campo vuoto resta quella salvata.</p>',
-                // never printed, for anyone: dots when a key is saved, an empty field to
-                // replace it (left empty, the saved key is kept — see below)
+                // never printed: an empty input keeps the saved key
                 get_option('sp_turnstile_secret_key') ? '••••••••••••' : '',
                 sp_footer_locked_attr()
             );
@@ -179,10 +178,7 @@ function sp_render_footer_settings_page() {
 }
 
 // --- Admin-only fields -----------------------------------------------------------
-// Form recipient and Turnstile keys are shown greyed out to editors and only
-// administrators can change them. Disabled inputs aren't submitted, so on an
-// editor's save the stored value is kept (the check is server side, not just
-// the disabled attribute).
+// greyed out for editors, enforced server side too
 const SP_FOOTER_ADMIN_ONLY = ['sp_contatti_form_recipient', 'sp_turnstile_site_key', 'sp_turnstile_secret_key'];
 
 function sp_footer_locked_attr() {
@@ -194,8 +190,7 @@ add_filter('option_page_capability_sp_footer', function() {
     return 'edit_pages';
 });
 
-// the secret key field is always empty on the page: an empty submission keeps
-// the saved key
+// an empty submission keeps the saved key
 add_filter('pre_update_option_sp_turnstile_secret_key', function($value, $old) {
     return $value === '' ? $old : $value;
 }, 5, 2);

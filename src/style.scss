@@ -9,9 +9,7 @@ $color-textlight: #211F26; // text2
 // typography: font vars, type scale, type() mixin
 @import "typography";
 
-// default bootstrap border-utility color (.border, .border-top, ...) to match
-// the divider color — override locally (inline style or a scoped rule) if a
-// specific border needs a different color
+// border utility colour = divider colour
 :root {
     --bs-border-color: #{$color-accent};
 }
@@ -147,8 +145,7 @@ h5 {
     }
 }
 
-// staggered grid reveal — class added by main.js, never in markup, so content
-// stays visible without JS; the per-item delay is set inline
+// staggered grid reveal: class added by main.js, delay set inline
 .sp-reveal {
     opacity: 0;
     transform: translateY(1.5rem);
@@ -176,9 +173,7 @@ h5 {
 @import "footer";
 
 // after the imports: needs $header-height from _header.scss
-// desktop sticky column (intervento data, servizi phase intro). main.js adds
-// .no-sticky when the element is taller than the viewport can show, so it
-// scrolls normally instead of having its bottom cut off
+// desktop sticky column; main.js adds .no-sticky when it's taller than the viewport
 .sp-sticky {
     @media (min-width: 992px) {
         align-self: flex-start;

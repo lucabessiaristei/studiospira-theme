@@ -106,9 +106,7 @@ add_action('acf/init', function() {
                 'instructions'  => 'Codice es. 2.04',
             ],
             [
-                // choices (services grouped under their phase) are filled in
-                // by acf/load_field in acf-servizi.php; phases are only group
-                // headings, so they can't be ticked
+                // choices filled by acf/load_field in acf-servizi.php
                 'key'              => 'field_interventi_servizi',
                 'name'             => 'servizi',
                 'label'            => 'Servizi',
@@ -140,8 +138,7 @@ add_action('acf/init', function() {
         'label_placement'=> 'top',
     ]);
 
-    // English name of the destinazione d'uso, shown under the Italian one on
-    // the term add/edit screens — see sp_term_name()
+    // English name, see sp_term_name()
     acf_add_local_field_group([
         'key'    => 'group_destinazione_uso',
         'title'  => 'Traduzione',

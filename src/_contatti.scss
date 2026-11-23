@@ -36,10 +36,7 @@
         }
     }
 
-    // stessa altezza resa da .sp-btn (1rem + riga da 27px + 1.2rem = 62.2):
-    // qui la riga e' 16px x 1.35 (line-height intrinseco di Familjen Grotesk),
-    // quindi il padding verticale assorbe la differenza e i 2px di bordo.
-    // Il padding orizzontale e' quello del bottone, cosi' il testo rientra uguale
+    // same height as .sp-btn (62.2px), border included
     input[type="text"],
     input[type="email"],
     input[type="tel"],
@@ -55,8 +52,7 @@
         line-height: 1.35;
         color: $color-text;
 
-        // solo il colore cambia: cambiare lo spessore sposterebbe di 2px
-        // tutto quello che sta sotto al campo
+        // colour only: a thicker border would shift the layout
         &:focus {
             outline: none;
             border-color: $color-accent;

@@ -3,9 +3,7 @@
 if (!defined('ABSPATH')) exit;
 
 // --- Sitemap ----------------------------------------------------------------------
-// Only pages and interventi are listed. Articoli link out to external sites,
-// pubblicazioni are shown on Chi siamo, destinazione d'uso archives and author
-// pages aren't part of the site (and author URLs would expose usernames).
+// only pages and interventi
 
 add_filter('wp_sitemaps_post_types', function($post_types) {
     unset($post_types['articoli'], $post_types['pubblicazioni']);
@@ -22,9 +20,8 @@ add_filter('wp_sitemaps_add_provider', function($provider, $name) {
 }, 10, 2);
 
 // --- Pages outside the site ------------------------------------------------------
-// The same pages are also kept out of search results: noindex on articoli,
-// pubblicazioni and destinazione d'uso archives; author pages redirect to the
-// home (they'd only expose usernames).
+// noindex on articoli, pubblicazioni and destinazione archives; author pages
+// redirect home
 
 add_filter('wp_robots', function($robots) {
     if (is_singular(['articoli', 'pubblicazioni']) || is_tax('destinazione_uso')) {
@@ -39,13 +36,11 @@ add_action('template_redirect', function() {
         wp_safe_redirect(home_url('/'), 301);
         exit;
     }
-}, 1); // before redirect_canonical, which would send ?author=1 to /author/<username>/ first
+}, 1); // before redirect_canonical
 
 // --- SEO fields -------------------------------------------------------------------
-// Every page and intervento has its own meta title and description, per
-// language (each translation is its own post). The share image is chosen on
-// pages (shared by all languages, like the banner); interventi use their cover.
-// The Interventi archive isn't a page: its fields are on Interventi > SEO elenco.
+// meta title/description per page and intervento; archive fields under
+// Interventi > SEO elenco
 
 const SP_SEO_BRAND = 'SPIRA srl';
 
@@ -215,7 +210,7 @@ function sp_seo_data() {
         $data['url']         = is_front_page() && function_exists('pll_home_url') ? pll_home_url() : wp_get_canonical_url($id);
 
         if (get_post_type($id) === 'interventi') {
-            $cover = get_field('copertina', $id); // the Italian original's, see i18n-fields.php
+            $cover = get_field('copertina', $id); // from the Italian original
             $data['image'] = is_array($cover) ? (int) ($cover['ID'] ?? 0) : (int) $cover;
             $data['type']  = 'article';
         } else {
@@ -229,7 +224,7 @@ function sp_seo_data() {
         $data['title']       = sp_seo_archive_option('title') ?: post_type_archive_title('', false) . ' | ' . SP_SEO_BRAND;
         $data['description'] = sp_seo_archive_option('description');
         $data['image']       = (int) get_option('sp_seo_interventi_image');
-        $data['url']         = get_post_type_archive_link('interventi'); // also for ?servizio= (noindex, canonical to the archive)
+        $data['url']         = get_post_type_archive_link('interventi'); // also for ?servizio= (noindex)
     }
 
     // last resort for the share image: the home page's

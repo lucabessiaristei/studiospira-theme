@@ -1,9 +1,7 @@
 <?php
 
-// Servizi are two levels deep (see cpt-interventi.php): a top-level servizio
-// is a phase of the Servizi page, its children are the services listed in it.
-// Both get a description; only the services get an icon. Not translated by
-// Polylang: the English text sits in the "_en" fields (see i18n-fields.php).
+// top-level servizi are phases, their children are services. Not translated:
+// English text in the "_en" fields (see i18n-fields.php).
 
 if (!defined('ABSPATH')) exit;
 
@@ -16,8 +14,7 @@ add_action('acf/init', function() {
         'key'    => 'group_servizi',
         'title'  => 'Dati servizio',
         'fields' => [
-            // "tipo" and "fase" are not stored: they are read from and written
-            // to post_parent (see below), which stays the single source of truth
+            // not stored: mirrors post_parent
             [
                 'key'           => 'field_servizi_tipo',
                 'name'          => 'tipo',
@@ -63,8 +60,7 @@ add_action('acf/init', function() {
                 'new_lines' => '',
             ],
             [
-                // a Phosphor Light icon name (e.g. "ruler"), picked from the
-                // visual grid added under the field (sp_servizi_icon_picker)
+                // Phosphor Light icon name, set with the picker below
                 'key'               => 'field_servizi_icona',
                 'name'              => 'icona',
                 'label'             => 'Icona',
@@ -119,8 +115,7 @@ add_filter('acf/fields/post_object/query/key=field_servizi_fase', function($args
     return $args;
 }, 10, 3);
 
-// classic editor for servizi: there is no body text anyway, and it keeps the
-// Tipo switch the only place to set the hierarchy
+// classic editor: no body text
 add_filter('use_block_editor_for_post_type', function($use, $post_type) {
     return $post_type === 'servizi' ? false : $use;
 }, 10, 2);
@@ -154,11 +149,10 @@ function sp_get_servizi_of_fase($fase_id) {
     ]);
 }
 
-// services (children) of the given IDs, published only, in page order:
-// by their phase's "Ordine", then their own. Phases and stray IDs are dropped.
+// services among $ids, published only, in page order
 function sp_sort_servizi($ids) {
     $servizi = [];
-    foreach (array_filter(array_map('intval', (array) $ids)) as $id) { // no falsy IDs: get_post(0) = current post
+    foreach (array_filter(array_map('intval', (array) $ids)) as $id) { // get_post(0) = current post
         $post = get_post($id);
         if (!$post || $post->post_type !== 'servizi' || $post->post_status !== 'publish' || !$post->post_parent) continue;
         $fase = get_post($post->post_parent);
@@ -209,9 +203,7 @@ add_filter('register_post_type_args', function($args, $post_type) {
 }, 10, 2);
 
 // --- Example interventi on the Servizi page (up to 3 per phase) ----------------
-// One relationship field per phase, generated from the phases themselves so a
-// new phase gets its field automatically. Stored on the Servizi page, which
-// redattori can edit, and kept identical across its translations.
+// one relationship field per phase, stored on the Servizi page
 
 const SP_ESEMPI_MAX = 3;
 
@@ -271,10 +263,7 @@ add_filter('acf/prepare_field', function($field) {
     return $field;
 });
 
-// query args for the interventi with at least one service of the phase.
-// Always the Italian originals: services are stored on them (translations read
-// them from there, see i18n-fields.php), and the saved picks are Italian IDs,
-// swapped for their translation on display
+// interventi with a service of the phase (Italian originals)
 function sp_esempi_query_args($fase_id, $page_id) {
     $children = wp_list_pluck(sp_get_servizi_of_fase($fase_id), 'ID');
 
@@ -301,13 +290,10 @@ add_filter('pll_copy_post_metas', function($metas) {
     return $metas;
 });
 
-// the example interventi chosen for a phase on the Servizi page, in the
-// current language: published only, in the chosen order. None chosen = none
-// shown (the page then keeps just the phase button)
+// example interventi of a phase, current language, in the chosen order
 function sp_get_esempi_fase($fase_id, $page_id = null) {
     $out = [];
-    // an empty field is false/'' — never let it reach get_post(), which reads
-    // a falsy ID as "the current post" (the Servizi page itself)
+    // a falsy ID would make get_post() return the current post
     $ids = array_filter(array_map('intval', (array) get_field('esempi_fase_' . $fase_id, $page_id ?: get_the_ID())));
     foreach ($ids as $id) {
         if (function_exists('pll_get_post')) $id = pll_get_post($id) ?: $id;
@@ -317,28 +303,21 @@ function sp_get_esempi_fase($fase_id, $page_id = null) {
     return array_slice($out, 0, SP_ESEMPI_MAX);
 }
 
-// lowercase only the first letter, for "Interventi di rilievo e diagnostica"
-// (a full lowercase would also hit acronyms like "PA")
+// lowercase the first letter only (keeps acronyms like "PA")
 function sp_lcfirst($text) {
     return mb_strtolower(mb_substr($text, 0, 1)) . mb_substr($text, 1);
 }
 
-// slug box: WordPress hides it for post types without public URLs, but the
-// phase slugs are the /interventi/?servizio=<slug> values and the Servizi page
-// anchors, set from the handoff. Own ID (not "slugdiv") so it isn't hidden by
-// default in Screen Options. Admins only, so the links stay stable.
+// slug box for phases (admins only): slugs are used by ?servizio= and page anchors
 add_action('add_meta_boxes_servizi', function($post) {
     if (!current_user_can('manage_options')) return;
     add_meta_box('sp_slugdiv', 'Slug', 'post_slug_meta_box', 'servizi', 'side', 'high');
 });
 
 // --- Phosphor Light icons ------------------------------------------------------
-// The set is generated from @phosphor-icons/core by `npm run build:icons`
-// (scripts/build-phosphor.mjs) into inc/phosphor-light.php (front end) and
-// assets/js/phosphor-light.js (the picker below).
+// generated by `npm run build:icons`
 
-// inline SVG for a Phosphor Light icon name, '' if unknown. Colour follows
-// the CSS color (fill="currentColor").
+// inline SVG for an icon name, '' if unknown
 function sp_phosphor_svg($name, $class = '') {
     static $icons = null;
     if ($icons === null) $icons = include __DIR__ . '/phosphor-light.php';

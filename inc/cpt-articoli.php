@@ -19,8 +19,7 @@ add_action('init', function() {
     ]);
 });
 
-// nasconde i post nativi WP e i commenti dall'admin (non deregistrabili) —
-// il sito non usa né l'uno né l'altro
+// hide native posts and comments from the admin
 add_action('admin_menu', function() {
     remove_menu_page('edit.php');
     remove_menu_page('edit-comments.php');
@@ -31,8 +30,7 @@ add_action('admin_bar_menu', function($bar) {
     $bar->remove_node('comments');
 }, 999);
 
-// deliberately NOT translatable: one articolo serves both languages, with the
-// English title in "titolo_en" (see i18n-fields.php)
+// not translatable: English title in "titolo_en"
 add_filter('pll_get_post_types', function($post_types) {
     unset($post_types['articoli']);
     return $post_types;

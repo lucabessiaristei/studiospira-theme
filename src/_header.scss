@@ -29,8 +29,7 @@ $header-ease: ease;
     }
 
     .main-navigation {
-        // covers the whole viewport, header row included: the panel is itself
-        // the header's open-state background, so only one surface fades
+        // covers the viewport: the panel is the open-state background
         position: fixed;
         inset: 0;
         height: 100dvh;
@@ -100,8 +99,7 @@ $header-ease: ease;
             transition-delay: 0s;
         }
 
-        // outer bars converge on the middle one's center (9px away) and cross;
-        // the middle bar fades out underneath them
+        // outer bars cross, the middle one fades
         .menu-toggle__icon span:first-child {
             transform: translateY(7px) rotate(45deg);
         }
@@ -154,24 +152,20 @@ $header-ease: ease;
     }
 }
 
-// no transitions while resizing, or crossing 992px animates the panel out of
-// its desktop state. Skipped when open: on mobile the URL bar collapsing fires
-// a resize that would snap the opening mid-flight.
+// no transitions while resizing (except when open: the mobile URL bar fires resize)
 body.is-resizing .site-header:not(.menu-is-open),
 body.is-resizing .site-header:not(.menu-is-open) * {
     transition: none !important;
     animation: none !important;
 }
 
-// first paint only: apply the initial scroll state instantly, so loading
-// mid-page doesn't fade in from the unscrolled colour (see main.js)
+// first paint: no fade (see main.js)
 .site-header.is-init,
 .site-header.is-init * {
     transition: none !important;
 }
 
-// mobile menu items: cropped slide-up reveal, same technique as the
-// intervento page title (overflow:hidden parent + translateY(100%) child)
+// mobile menu items: cropped slide-up reveal
 @media (max-width: 991.98px) {
     .main-navigation .menu li {
         overflow: hidden;
@@ -194,12 +188,7 @@ body.is-resizing .site-header:not(.menu-is-open) * {
     to { transform: translateY(0); }
 }
 
-// .site-content {
-//     padding-top: $header-height;
-// }
-
-// on the home page the header overlays the hero (same bg-color, seamless)
-// and fades to white once scrolled past it — see main.js for the trigger
+// home: header overlays the hero, turns white once scrolled past (main.js)
 .home {
     .site-content {
         padding-top: 0;
@@ -266,8 +255,7 @@ body.is-resizing .site-header:not(.menu-is-open) * {
     }
 }
 
-// no background change here on purpose — the panel covers the header row, so
-// the dark background comes from it alone and there's only one fade
+// no background here: the panel provides it
 #masthead.menu-is-open {
     .menu-toggle {
         color: $color-weiss;
@@ -279,8 +267,7 @@ body.is-resizing .site-header:not(.menu-is-open) * {
     }
 }
 
-// must fade at the panel's rate, or the logo snaps to white while the header
-// is still light and reads as a flash
+// fade at the panel's rate to avoid a flash
 .site-logo-black img {
     transition: filter $header-fade $header-ease;
 }

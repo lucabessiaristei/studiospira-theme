@@ -1,10 +1,7 @@
 <?php
 
-// Destinazioni d'uso, articoli and pubblicazioni are NOT managed by Polylang:
-// each exists once and is shared by both languages, with the English text
-// kept in "_en" fields on the same edit screen. These helpers pick the right
-// value for the current language, falling back to Italian when the English
-// one is empty.
+// destinazioni d'uso, articoli and pubblicazioni aren't in Polylang: English in
+// "_en" fields, falling back to Italian
 
 if (!defined('ABSPATH')) exit;
 
@@ -36,10 +33,7 @@ function sp_field_i18n($name, $post_id) {
     return get_field($name, $post_id);
 }
 
-// Fields that are the same in every language (e.g. the banner photo) are read
-// from the default-language (Italian) translation, so a translation always
-// inherits them — Polylang's custom-field sync is off, so copying them would
-// only happen once, when the translation is created.
+// shared fields (e.g. banner photo) are read from the Italian page
 function sp_source_post_id($post_id = null) {
     $post_id = $post_id ?: get_the_ID();
     if (function_exists('pll_get_post') && function_exists('pll_default_language')) {
@@ -52,8 +46,7 @@ function sp_shared_field($name, $post_id = null) {
     return get_field($name, sp_source_post_id($post_id));
 }
 
-// ...and those fields are hidden when editing a translation, where they'd
-// have no effect
+// ...and hidden on translations
 const SP_SHARED_FIELD_KEYS = ['field_home_banner_photo', 'field_chi_siamo_banner_photo', 'field_seo_image'];
 
 add_filter('acf/prepare_field', function($field) {
@@ -68,10 +61,8 @@ add_filter('acf/prepare_field', function($field) {
 });
 
 // --- Interventi: language-independent data comes from the Italian intervento --
-// Cover, project data, destinazione d'uso, services, articoli and gallery are
-// the same in every language: an English intervento reads them from its
-// Italian original (so editing the Italian one updates both), and its editor
-// shows only what is actually translated (title and text).
+// shared data is read from the Italian original; the English editor shows only
+// title and text
 
 const SP_INTERVENTI_SHARED_KEYS = [
     'field_interventi_copertina',
@@ -87,8 +78,7 @@ const SP_INTERVENTI_SHARED_KEYS = [
     'field_interventi_articoli',
 ];
 
-// the Italian original of a translated intervento, or null if $post_id is
-// already the original (or not an intervento)
+// Italian original of a translated intervento, or null
 function sp_intervento_source($post_id) {
     $post_id = (int) $post_id;
     if (!$post_id || get_post_type($post_id) !== 'interventi') return null;
@@ -96,8 +86,7 @@ function sp_intervento_source($post_id) {
     return ($source && $source !== $post_id) ? (int) $source : null;
 }
 
-// get_field() & co. on a translation: answer with the original's raw value
-// (ACF then formats it as usual)
+// get_field() on a translation returns the original's value
 add_filter('acf/pre_load_value', function($value, $post_id, $field) {
     if (!in_array($field['key'], SP_INTERVENTI_SHARED_KEYS, true)) return $value;
     $source = sp_intervento_source($post_id);

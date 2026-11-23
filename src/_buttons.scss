@@ -15,9 +15,7 @@ $icon-h-nav: 14px;
     mask: url('../assets/icons/spiral.svg') no-repeat center / contain;
     -webkit-mask: url('../assets/icons/spiral.svg') no-repeat center / contain;
     transform-origin: unquote($origin);
-    // stay composited: without this the icon is promoted to a layer only while
-    // rotating, and any icon sitting on a sub-pixel y snaps by up to 1px on the
-    // way in and back out
+    // stay composited, or the icon snaps 1px while rotating
     will-change: transform;
     transition: transform 0.4s ease, background-color 0.35s ease;
 }
@@ -143,8 +141,7 @@ a:not(:where(.sp-btn)):not(:where(.footer-menu a)):not(:where(header nav .menu a
     @include sp-hover;
 }
 
-// compact variant: smaller text and nav-sized spiral. Combines with .ghost,
-// which keeps its own zero padding.
+// compact variant: smaller text and spiral
 .sp-btn.sp-small {
     font-size: 16px;
 
@@ -152,8 +149,7 @@ a:not(:where(.sp-btn)):not(:where(.footer-menu a)):not(:where(header nav .menu a
 
     &::after { width: $icon-w-nav; height: $icon-h-nav; }
 
-    // position only — re-including sp-underline here would also re-declare
-    // transform: scaleX(0) after sp-hover's rules and pin the underline hidden
+    // position only: re-including sp-underline would hide the underline
     &::before {
         bottom: -0.15rem;
         left: calc(#{$icon-w-nav} + 0.35rem);

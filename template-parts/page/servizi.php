@@ -2,11 +2,10 @@
 // phases = top-level servizi, services = their children (see inc/acf-servizi.php)
 $fasi = sp_get_servizi_fasi();
 
-// phases with at least one intervento: only these get the "Interventi di ..."
-// button, the same rule that puts them in the Interventi filter
+// only phases with interventi get the "Interventi di ..." button
 $fasi_usate = wp_list_pluck(sp_get_used_servizi(), 'ID');
 
-$banner_photo = sp_shared_field('banner_photo'); // field shared with Chi siamo (acf-chi-siamo.php), always the Italian page's (i18n-fields.php)
+$banner_photo = sp_shared_field('banner_photo'); // always the Italian page's
 ?>
 
 <?php if ($banner_photo) : ?>
@@ -31,8 +30,7 @@ $banner_photo = sp_shared_field('banner_photo'); // field shared with Chi siamo 
         $servizi   = sp_get_servizi_of_fase($fase->ID);
         $esempi    = sp_get_esempi_fase($fase->ID);
     ?>
-        <?php // one F between blocks like the other pages: top margin only (margin, not
-              // padding, so index anchors land on the title, not on the gap above it) ?>
+        <?php // margin, not padding, so anchors land on the title ?>
         <section id="<?php echo esc_attr($fase->post_name); ?>" class="servizi__fase mt-d mt-lg-g">
         <?php // the sticky intro is bounded by this row, so it releases before the examples ?>
         <div class="row g-0">

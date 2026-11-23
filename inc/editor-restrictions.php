@@ -16,9 +16,7 @@ add_filter('tiny_mce_before_init', function($settings) {
     return $settings;
 });
 
-// Contatti's template renders a contact form and Servizi's is built from the
-// servizi, neither uses the_content() — the editor box has nothing to do there.
-// sp_post_slug_is() also matches their translations ("contact", "services")
+// Contatti and Servizi don't render the_content() (translations included)
 add_action('admin_init', function() {
     global $pagenow;
     if (!in_array($pagenow, ['post.php', 'post-new.php'], true)) return;

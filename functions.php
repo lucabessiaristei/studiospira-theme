@@ -19,7 +19,7 @@ require_once get_stylesheet_directory() . '/inc/template-tags.php';
 require_once get_stylesheet_directory() . '/inc/seo.php';
 require_once get_stylesheet_directory() . '/inc/user-roles.php';
 require_once get_stylesheet_directory() . '/inc/editor-restrictions.php';
-// site-lockdown.php disabled — the site is public again; re-add this line to reinstate the maintenance-mode gate
+// site-lockdown.php (maintenance gate) is disabled
 
 add_action('after_setup_theme', function() {
     add_theme_support('title-tag');
@@ -33,8 +33,7 @@ add_action('after_setup_theme', function() {
     ]);
 });
 
-// derived from the current domain (rather than hardcoded) so it keeps working
-// once the site moves from the lucabessiaristei.it subdomain to studiospira.it
+// from the current domain, not hardcoded
 add_filter('wp_mail_from', function() {
     return 'contact@' . wp_parse_url(home_url(), PHP_URL_HOST);
 });
@@ -43,9 +42,7 @@ add_filter('wp_mail_from_name', function() {
     return 'Studio Spira';
 });
 
-// a Polylang translation gets its own slug (e.g. "contact" for "contatti"),
-// so a plain slug check misses it — this also matches any of its sibling
-// translations against $slug
+// also matches the page's Polylang translations
 function sp_post_slug_is($slug, $post_id = null) {
     $post_id = $post_id ?: get_the_ID();
     if (!$post_id) return false;
@@ -64,9 +61,7 @@ function sp_post_slug_is($slug, $post_id = null) {
     return false;
 }
 
-// resolves a hardcoded Italian slug (used as a stable anchor) to that page's
-// URL in the CURRENT language — e.g. sp_page_url('contatti') returns
-// /contatti/ for an Italian visitor but /contact/ for an English one
+// URL of a page by its Italian slug, in the current language
 function sp_page_url($it_slug) {
     $page = get_page_by_path($it_slug);
     if (!$page) return home_url('/' . $it_slug);

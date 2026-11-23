@@ -22,9 +22,7 @@ $servizi-num-size: 2.2rem;
             }
         }
 
-        // no global link underline here: only the title (not the number) gets
-        // the buttons' underline, drawn in from the left on hover (sp-underline,
-        // see _buttons.scss)
+        // only the title gets the hover underline
         &-link {
             color: inherit;
             text-decoration: none;
@@ -52,10 +50,7 @@ $servizi-num-size: 2.2rem;
         // index anchors land below the fixed header
         scroll-margin-top: calc(#{$header-height} + 2rem);
 
-        // stacked layout: the badge is centered on the whole title
-        // (align-items-center on the h2). Desktop: this box is exactly one
-        // title line tall (1lh, top-aligned by align-items-lg-start) and puts
-        // the badge at its bottom — the bottom of the title's first line
+        // badge box: one title line tall on desktop, badge at its bottom
         &-num-line {
             flex: none;
             display: flex;
@@ -84,8 +79,7 @@ $servizi-num-size: 2.2rem;
             }
         }
 
-        // desktop (phase beside the services), aligned with the title text:
-        // past the badge + gap-3 (1rem). Stacked layout (phone, tablet): no indent
+        // desktop: indent past the badge
         &-desc {
             max-width: 32rem;
 
@@ -95,20 +89,16 @@ $servizi-num-size: 2.2rem;
         }
     }
 
-    // example interventi: from tablet up, a short row is centered by
-    // .intervento-cards--centered (_front-page.scss)
+    // tablet up: short rows centered (.intervento-cards--centered)
     &__esempi {
-        // phones: a horizontal carousel instead of a stacked list — one track
-        // per card, ~80% wide so the next one peeks in, cropped at the page
-        // margin. Mouse drag scrolls it too (main.js)
+        // phones: horizontal carousel, cards ~80% wide (drag in main.js)
         @media (max-width: 767.98px) {
             grid-template-columns: none;
             grid-auto-flow: column;
             grid-auto-columns: 80%;
             justify-content: start;
             overflow-x: auto;
-            // overflow-x: auto turns the y axis to auto too, and the cards'
-            // fade-in (translateY) briefly overflows downward — never scroll y
+            // never scroll y (the card fade-in overflows briefly)
             overflow-y: hidden;
             overscroll-behavior-x: contain;
             scrollbar-width: none;
@@ -133,8 +123,7 @@ $servizi-num-size: 2.2rem;
         &:last-child {
             border-bottom: 0 !important;
 
-            // no padding under the last service: the row ends at its text, so
-            // the sticky phase intro (bounded by the row) stops level with it
+            // no bottom padding: the sticky intro stops level with the last service
             @media (min-width: 992px) {
                 padding-bottom: 0 !important;
             }
@@ -164,8 +153,7 @@ $servizi-num-size: 2.2rem;
     }
 }
 
-// index links scroll to their phase instead of jumping (native smooth scroll,
-// only on this page; scroll-margin-top on the phase keeps it below the header)
+// smooth scroll for index links (this page only)
 @media (prefers-reduced-motion: no-preference) {
     html:has(.servizi__indice) {
         scroll-behavior: smooth;

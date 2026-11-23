@@ -1,10 +1,9 @@
 .front-page {
 
-    // load-in reveal: a decorative curtain (not the real background) grows from
-    // the top so the text underneath is never distorted; see @media block below
+    // load-in reveal: a decorative curtain grows from the top (see @media below)
     &__hero {
         position: relative;
-        overflow: hidden; // clips the curtain and the content's off-screen start position
+        overflow: hidden; // clips the curtain and content
 
         &::before {
             content: '';
@@ -14,7 +13,7 @@
         }
 
         .container {
-            position: relative; // keep content painting above the ::before curtain
+            position: relative; // above the curtain
             z-index: 1;
         }
     }
@@ -38,9 +37,11 @@
     &__testo {
 
         &-content {
-            p {
+            p,
+            p span,
+            span {
                 @include type('h1');
-                font-weight: $primary-font-medium; // 500
+                font-weight: $primary-font-medium !important;
                 color: $color-bg;
             }
 
@@ -51,13 +52,11 @@
             b, strong {
                 @include type('h1');
                 font-family: $secondary-font;
-                font-weight: $secondary-font-regular;
+                font-weight: $secondary-font-regular !important;
                 color: $color-accent
             }
 
-            // keep last: media queries add no specificity, so this only beats
-            // the b/strong rule above by source order — when it sat earlier the
-            // 40px from type('h1') won and mobile stayed at desktop size
+            // keep last: beats the b/strong rule by source order
             @media (max-width: 767.98px) {
                 p,
                 b,
@@ -76,7 +75,7 @@
         &-img {
             display: block;
             width: 100%;
-            max-height: 420px; // caps portrait-oriented photos so they don't tower over the rest of the row
+            max-height: 420px; // caps portrait photos
             overflow: hidden;
 
             img {
@@ -101,11 +100,8 @@
     }
 }
 
-// intervento card grids (home featured + interventi archive): each card spans
-// two subgrid rows, so within a row every photo sits on a shared bottom edge
-// and every title starts on a shared line, however many lines the titles run.
-// The Bootstrap row/gx/gy classes stay for their --bs-gutter-* variables; the
-// flex gutter margins/padding they add are cancelled here.
+// intervento card grids: subgrid rows align photo bottoms and title tops.
+// Bootstrap gutter margins are cancelled, only --bs-gutter-* is used.
 .intervento-cards {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -147,10 +143,7 @@
     }
 }
 
-// centered last row: an incomplete last row (e.g. 4 or 5 cards on 3 columns)
-// is centered instead of left-aligned. The grid gets twice the tracks, every
-// card spans two, and the cards of a short last row start one track later.
-// Used by the home featured grid and the Servizi example grids.
+// centered last row: double tracks, a short last row starts one track in
 .intervento-cards--centered {
     @media (min-width: 768px) and (max-width: 991.98px) {
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -169,14 +162,12 @@
         // one card on the last row: in the middle
         > .col:last-child:nth-child(3n + 1) { grid-column: 3 / span 2; }
 
-        // two cards on the last row: the first starts one track in, the
-        // second follows it
+        // two cards on the last row: shifted one track
         > .col:nth-last-child(2):nth-child(3n + 1) { grid-column: 2 / span 2; }
     }
 }
 
-// home load-in animation — skipped entirely for reduced-motion users, who get
-// the plain final state defined above (nothing pre-hidden outside this block)
+// home load-in animation (skipped for reduced motion)
 @media (prefers-reduced-motion: no-preference) {
     .front-page {
         &__hero {

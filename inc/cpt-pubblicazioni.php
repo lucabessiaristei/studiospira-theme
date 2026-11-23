@@ -19,8 +19,7 @@ add_action('init', function() {
     ]);
 });
 
-// deliberately NOT translatable: one pubblicazione serves both languages, with
-// the English texts in the "_en" fields (see i18n-fields.php)
+// not translatable: English in "_en" fields
 add_filter('pll_get_post_types', function($post_types) {
     unset($post_types['pubblicazioni']);
     return $post_types;

@@ -35,9 +35,7 @@ function sp_breadcrumb() {
     echo '</ol></nav>';
 }
 
-// phases with at least one published intervento ticking one of their
-// services, in page order — the options of the Interventi "Servizio" filter.
-// A phase with no interventi yet simply doesn't show up.
+// phases with published interventi: the Servizio filter options
 function sp_get_used_servizi() {
     $intervento_ids = get_posts([
         'post_type'      => 'interventi',
@@ -74,9 +72,7 @@ function sp_get_used_posizioni() {
     return array_values($posizioni);
 }
 
-// filtered Interventi lists (/interventi/?servizio=...) are thin near-duplicates
-// of the full list: keep them out of the index, point search engines to the
-// unfiltered page
+// filtered lists: noindex, canonical to the full list
 function sp_is_filtered_interventi() {
     return is_post_type_archive('interventi') && isset($_GET['servizio']);
 }
@@ -97,10 +93,7 @@ add_action('wp_head', function() {
 });
 
 // --- Responsive images ----------------------------------------------------------
-// Every photo goes through wp_get_attachment_image(), so it gets a srcset of
-// the sizes WordPress generates on upload (300 → 2048px) and the browser picks
-// the smallest file that's sharp at the displayed width — new uploads included,
-// nothing to do per photo. $sizes describes that displayed width per breakpoint.
+// every photo gets a srcset; $sizes is its displayed width per breakpoint
 
 // container inner width per breakpoint (Bootstrap container minus px-4 = 3rem)
 const SP_SIZES_FULL = '(min-width: 1400px) 1272px, (min-width: 1200px) 1092px, (min-width: 992px) 912px, (min-width: 768px) 672px, (min-width: 576px) 492px, calc(100vw - 3rem)';
@@ -116,8 +109,7 @@ function sp_image($image, $size, $sizes, $attrs = []) {
     return wp_get_attachment_image($id, $size, false, $attrs);
 }
 
-// the banner/cover photo at the top of a page: full container width, loaded
-// straight away with high priority (it's the first thing on screen)
+// page banner/cover: full width, high priority
 function sp_banner_image($image) {
     return sp_image($image, '2048x2048', SP_SIZES_FULL, [
         'class'         => 'banner_photo',

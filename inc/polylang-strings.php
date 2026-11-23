@@ -1,9 +1,6 @@
 <?php
 
-// Registers the theme's pll_e()/pll__() strings with Polylang so they show
-// up under Lingue > Traduzioni — without this, calling pll_e() on a string
-// Polylang has never heard of just echoes the Italian text unconditionally,
-// regardless of the current language.
+// registers the theme's pll_e()/pll__() strings with Polylang (Lingue > Traduzioni)
 
 if (!defined('ABSPATH')) exit;
 
