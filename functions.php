@@ -16,6 +16,7 @@ require_once get_stylesheet_directory() . '/inc/contact-form.php';
 require_once get_stylesheet_directory() . '/inc/polylang-strings.php';
 require_once get_stylesheet_directory() . '/inc/i18n-fields.php';
 require_once get_stylesheet_directory() . '/inc/template-tags.php';
+require_once get_stylesheet_directory() . '/inc/seo.php';
 require_once get_stylesheet_directory() . '/inc/user-roles.php';
 require_once get_stylesheet_directory() . '/inc/editor-restrictions.php';
 // site-lockdown.php disabled — the site is public again; re-add this line to reinstate the maintenance-mode gate

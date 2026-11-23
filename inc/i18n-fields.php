@@ -54,7 +54,7 @@ function sp_shared_field($name, $post_id = null) {
 
 // ...and those fields are hidden when editing a translation, where they'd
 // have no effect
-const SP_SHARED_FIELD_KEYS = ['field_home_banner_photo', 'field_chi_siamo_banner_photo'];
+const SP_SHARED_FIELD_KEYS = ['field_home_banner_photo', 'field_chi_siamo_banner_photo', 'field_seo_image'];
 
 add_filter('acf/prepare_field', function($field) {
     if (!in_array($field['key'] ?? '', SP_SHARED_FIELD_KEYS, true)) return $field;
