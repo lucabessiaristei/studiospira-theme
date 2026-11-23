@@ -1,3 +1,12 @@
+// honeypot field: off-screen rather than display:none, which some bots skip
+.contatti__hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 .contatti__form-message {
     padding: 1rem 1.5rem;
     margin-bottom: 1.5rem;

@@ -12,6 +12,13 @@
             <input type="hidden" name="action" value="sp_contatti_submit">
             <input type="hidden" name="sp_contatti_lang" value="<?php echo esc_attr(pll_current_language()); ?>">
             <?php wp_nonce_field('sp_contatti_submit', 'sp_contatti_nonce'); ?>
+            <?php // honeypot: a plausible field bots fill in, off-screen and out of
+                  // the tab order for people; plus a signed render time (see contact-form.php) ?>
+            <div class="contatti__hp" aria-hidden="true">
+                <label for="contatti-sito">Sito web</label>
+                <input type="text" id="contatti-sito" name="sito_web" value="" tabindex="-1" autocomplete="off">
+            </div>
+            <input type="hidden" name="sp_contatti_t" value="<?php echo esc_attr(sp_contatti_time_token()); ?>">
             <div class="row g-4">
 
                 <div class="col-12 col-md-6">

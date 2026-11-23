@@ -301,6 +301,31 @@ function sp_contatti_confirmation_email_body($nome, $lang)
     return sp_contact_form_email_wrap(sp_contatti_t('Messaggio ricevuto', $lang), $body);
 }
 
+// --- Honeypot -----------------------------------------------------------------
+// The form carries its render time, signed so it can't be forged. A submission
+// with the hidden "sito_web" field filled in, or sent less than
+// SP_CONTATTI_MIN_SECONDS after the page was rendered, is a bot: it gets the
+// normal success page (so it learns nothing) and no email is sent. Only a
+// minimum is checked: with page caching the render time can be old.
+const SP_CONTATTI_MIN_SECONDS = 3;
+
+function sp_contatti_time_token()
+{
+    $t = time();
+    return $t . '.' . hash_hmac('sha256', (string) $t, wp_salt('nonce'));
+}
+
+function sp_contatti_is_bot()
+{
+    if (!empty($_POST['sito_web'])) return true;
+
+    $parts = explode('.', (string) ($_POST['sp_contatti_t'] ?? ''), 2);
+    if (count($parts) !== 2 || !ctype_digit($parts[0])) return true;
+    if (!hash_equals(hash_hmac('sha256', $parts[0], wp_salt('nonce')), $parts[1])) return true;
+
+    return (time() - (int) $parts[0]) < SP_CONTATTI_MIN_SECONDS;
+}
+
 function sp_handle_contatti_submit()
 {
     // redirect back to whichever language page the form was actually
@@ -309,6 +334,11 @@ function sp_handle_contatti_submit()
 
     if (!isset($_POST['sp_contatti_nonce']) || !wp_verify_nonce($_POST['sp_contatti_nonce'], 'sp_contatti_submit')) {
         wp_safe_redirect(add_query_arg('contatti', 'error', $redirect_base));
+        exit;
+    }
+
+    if (sp_contatti_is_bot()) {
+        wp_safe_redirect(add_query_arg('contatti', 'success', $redirect_base));
         exit;
     }
 
@@ -336,12 +366,19 @@ function sp_handle_contatti_submit()
 
     $admin_lang = pll_default_language();
 
-    wp_mail(
+    // if the message to the studio doesn't go out, the visitor gets the error
+    // message (not a false "sent") and no confirmation email
+    $sent = wp_mail(
         $recipient,
         sp_contatti_t('Nuovo messaggio dal form contatti', $admin_lang),
         sp_contatti_admin_email_body($nome, $cognome, $email, $telefono, $messaggio, $admin_lang),
         ['Content-Type: text/html; charset=UTF-8', 'Reply-To: ' . $email]
     );
+
+    if (!$sent) {
+        wp_safe_redirect(add_query_arg('contatti', 'error', $redirect_base));
+        exit;
+    }
 
     wp_mail(
         $email,

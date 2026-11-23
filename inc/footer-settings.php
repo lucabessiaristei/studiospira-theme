@@ -6,7 +6,7 @@ add_action('admin_menu', function() {
     add_menu_page(
         'Footer',
         'Footer',
-        'manage_options',
+        'edit_pages', // editors too: the admin-only fields are locked for them, see below
         'footer-settings',
         'sp_render_footer_settings_page',
         'dashicons-phone',
@@ -47,7 +47,7 @@ add_action('admin_init', function() {
         function() {
             printf(
                 '<input type="email" name="sp_contatti_email" value="%s" class="regular-text">
-                 <p class="description">L\'email di contatto mostrata in fondo al sito, protetta automaticamente dallo spam.</p>',
+                 <p class="description">L\'email di contatto mostrata in fondo al sito.</p>',
                 esc_attr(get_option('sp_contatti_email'))
             );
         },
@@ -74,9 +74,10 @@ add_action('admin_init', function() {
         'Email destinatario modulo',
         function() {
             printf(
-                '<input type="email" name="sp_contatti_form_recipient" value="%s" class="regular-text">
+                '<input type="email" name="sp_contatti_form_recipient" value="%s" class="regular-text"%s>
                  <p class="description">Indirizzo a cui arrivano i messaggi inviati dal form della pagina Contatti.</p>',
-                esc_attr(get_option('sp_contatti_form_recipient'))
+                esc_attr(get_option('sp_contatti_form_recipient')),
+                sp_footer_locked_attr()
             );
         },
         'footer-settings',
@@ -90,9 +91,10 @@ add_action('admin_init', function() {
         'Site Key',
         function() {
             printf(
-                '<input type="text" name="sp_turnstile_site_key" value="%s" class="regular-text">
+                '<input type="text" name="sp_turnstile_site_key" value="%s" class="regular-text"%s>
                  <p class="description">Chiave pubblica del widget anti-spam, mostrata nel form dei contatti.</p>',
-                esc_attr(get_option('sp_turnstile_site_key'))
+                esc_attr(get_option('sp_turnstile_site_key')),
+                sp_footer_locked_attr()
             );
         },
         'footer-settings',
@@ -104,9 +106,12 @@ add_action('admin_init', function() {
         'Secret Key',
         function() {
             printf(
-                '<input type="text" name="sp_turnstile_secret_key" value="%s" class="regular-text">
-                 <p class="description">Chiave segreta, usata per la verifica lato server. Non condividerla.</p>',
-                esc_attr(get_option('sp_turnstile_secret_key'))
+                '<input type="password" name="sp_turnstile_secret_key" value="" placeholder="%s" class="regular-text" autocomplete="new-password"%s>
+                 <p class="description">Chiave segreta, usata per la verifica lato server. Non condividerla. Per sostituirla incolla la nuova chiave; lasciando il campo vuoto resta quella salvata.</p>',
+                // never printed, for anyone: dots when a key is saved, an empty field to
+                // replace it (left empty, the saved key is kept — see below)
+                get_option('sp_turnstile_secret_key') ? '••••••••••••' : '',
+                sp_footer_locked_attr()
             );
         },
         'footer-settings',
@@ -171,4 +176,32 @@ function sp_render_footer_settings_page() {
         </form>
     </div>
     <?php
+}
+
+// --- Admin-only fields -----------------------------------------------------------
+// Form recipient and Turnstile keys are shown greyed out to editors and only
+// administrators can change them. Disabled inputs aren't submitted, so on an
+// editor's save the stored value is kept (the check is server side, not just
+// the disabled attribute).
+const SP_FOOTER_ADMIN_ONLY = ['sp_contatti_form_recipient', 'sp_turnstile_site_key', 'sp_turnstile_secret_key'];
+
+function sp_footer_locked_attr() {
+    return current_user_can('manage_options') ? '' : ' disabled title="Modificabile solo dagli amministratori"';
+}
+
+// editors may save the page (options.php checks this capability)
+add_filter('option_page_capability_sp_footer', function() {
+    return 'edit_pages';
+});
+
+// the secret key field is always empty on the page: an empty submission keeps
+// the saved key
+add_filter('pre_update_option_sp_turnstile_secret_key', function($value, $old) {
+    return $value === '' ? $old : $value;
+}, 5, 2);
+
+foreach (SP_FOOTER_ADMIN_ONLY as $option) {
+    add_filter('pre_update_option_' . $option, function($value, $old) {
+        return current_user_can('manage_options') ? $value : $old;
+    }, 10, 2);
 }
